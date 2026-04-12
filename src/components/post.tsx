@@ -36,7 +36,9 @@ export default function Post({ slug }: Props) {
       <h1 className="text-4xl lg:text-6xl text-center leading-relaxed font-bold mt-5">
         {data.title}
       </h1>
-      <p className="my-5 text-center text-xl text-gray-400">{data.subtitle}</p>
+      <p className="my-5 text-center text-xl text-gray-600 dark:text-gray-300">
+        {data.subtitle}
+      </p>
       <div className="my-5 flex items-center justify-center text-lg">
         {data.author.profilePicture && (
           <Image

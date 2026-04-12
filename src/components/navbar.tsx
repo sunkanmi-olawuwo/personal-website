@@ -20,12 +20,8 @@ export default async function Navbar() {
         <div className="flex items-center gap-5">
           <ThemeToggler />
 
-          <Button variant="secondary">
-            <Link
-              className="gap-2 flex items-center"
-              href={GITHUB_URL}
-              target="_blank"
-            >
+          <Button asChild variant="secondary">
+            <Link className="gap-2 flex items-center" href={GITHUB_URL} target="_blank">
               <GitHubLogoIcon /> GitHub
             </Link>
           </Button>

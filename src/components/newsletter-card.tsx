@@ -9,7 +9,13 @@ import { isHashnodeConfigured } from "@/lib/env";
 import { subscribeToNewsletter } from "@/lib/requests";
 
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 import { Input } from "./ui/input";
 
 export default function NewsletterCard() {
@@ -24,7 +30,7 @@ export default function NewsletterCard() {
   });
 
   function onSuccess() {
-    localStorage.setItem("newsletter", email);
+    window.localStorage.setItem("newsletter", email);
     toast.success(
       "Subscribed to newsletter! Check your email to confirm your subscription."
     );
@@ -59,7 +65,7 @@ export default function NewsletterCard() {
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
-      if (localStorage.getItem("newsletter")) return;
+      if (window.localStorage.getItem("newsletter")) return;
 
       setOpen(true);
     }, 5000);
@@ -73,10 +79,10 @@ export default function NewsletterCard() {
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Join the newsletter!</DialogTitle>
         </DialogHeader>
-        <p>
+        <DialogDescription>
           Enter your email to join the newsletter and stay up to date with the
           latest posts published in this blog!
-        </p>
+        </DialogDescription>
         <div className="flex flex-col gap-5 mt-3">
           <Input
             type="email"

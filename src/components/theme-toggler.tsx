@@ -15,8 +15,10 @@ export default function ThemeToggler() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="outline-none">
-        {resolvedTheme === "light" ? <SunIcon /> : <MoonIcon />}
+      <DropdownMenuTrigger asChild>
+        <button aria-label="Theme menu" className="outline-none" type="button">
+          {resolvedTheme === "light" ? <SunIcon /> : <MoonIcon />}
+        </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>
