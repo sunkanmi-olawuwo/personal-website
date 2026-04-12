@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { subscribeToNewsletter } from "@/lib/requests";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { toast } from "sonner";
 import { ClientError } from "graphql-request";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
 import { isHashnodeConfigured } from "@/lib/env";
+import { subscribeToNewsletter } from "@/lib/requests";
+
+import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Input } from "./ui/input";
 
 export default function NewsletterCard() {
   const [open, setOpen] = useState(false);
@@ -30,8 +32,11 @@ export default function NewsletterCard() {
   }
 
   function onError(err: unknown) {
-    if (err instanceof ClientError && err.response.errors?.length) {
-      toast.error(err.response.errors[0]!.message);
+    const firstGraphQLError =
+      err instanceof ClientError ? err.response.errors?.[0] : undefined;
+
+    if (firstGraphQLError) {
+      toast.error(firstGraphQLError.message);
       return;
     }
 
@@ -41,13 +46,6 @@ export default function NewsletterCard() {
     }
 
     toast.error("Something went wrong!");
-  }
-
-  function handleOpen() {
-    // Find localStorage key to see if already registered
-    if (localStorage.getItem("newsletter")) return;
-
-    setOpen(true);
   }
 
   async function handleSubscribe() {
@@ -60,9 +58,13 @@ export default function NewsletterCard() {
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      handleOpen();
+    const timeoutId = window.setTimeout(() => {
+      if (localStorage.getItem("newsletter")) return;
+
+      setOpen(true);
     }, 5000);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   return (

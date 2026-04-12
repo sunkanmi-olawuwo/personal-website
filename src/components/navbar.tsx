@@ -1,8 +1,10 @@
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+
+import { getBlogName } from "@/lib/requests";
+
 import ThemeToggler from "./theme-toggler";
 import { Button } from "./ui/button";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { getBlogName } from "@/lib/requests";
 
 const GITHUB_URL = "https://github.com/atharvadeosthale/hashnode-headless-blog";
 
