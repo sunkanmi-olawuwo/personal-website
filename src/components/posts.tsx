@@ -25,9 +25,9 @@ export default function Posts() {
           loading={index < 3 ? "eager" : undefined}
         />
       ))}
-      <div className="col-span-1 lg:col-span-3 w-full flex justify-center my-5">
+      <div className="col-span-1 mt-4 flex w-full justify-center sm:mt-5 lg:col-span-3">
         <Button
-          className="w-full"
+          className="w-full rounded-full border-border/80 bg-[hsl(var(--surface))] px-8 py-6 text-sm font-semibold tracking-[0.18em] sm:w-auto"
           variant="outline"
           disabled={!hasNextPage || isFetchingNextPage}
           onClick={() => fetchNextPage()}
