@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { mockPostEdges, mockPublication } from "../../src/lib/mock-blog-data";
+import { siteProfile } from "../../src/lib/site-profile";
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -13,6 +14,12 @@ test("mock home page renders realistic content and paginates", async ({
 }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: new RegExp(siteProfile.heroHeadline),
+    }),
+  ).toBeVisible();
   await expect(
     page.getByRole("link", { name: mockPublication.displayTitle }).first(),
   ).toBeVisible();
@@ -34,6 +41,74 @@ test("mock home page renders realistic content and paginates", async ({
   ).toBeDisabled();
 });
 
+test("home footer mirrors the digest layout with linkedin and github links", async ({
+  page,
+}) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await expect(
+    page.getByRole("heading", {
+      level: 2,
+      name: siteProfile.newsletterHeading ?? "",
+    }),
+  ).toBeVisible();
+  await expect(page.getByPlaceholder("email@address.com")).toBeVisible();
+  await expect(
+    page.getByRole("contentinfo").getByRole("link", { name: "LinkedIn" }),
+  ).toHaveAttribute("href", siteProfile.socialLinks?.[0].href ?? "");
+  await expect(
+    page.getByRole("contentinfo").getByRole("link", { name: "GitHub" }),
+  ).toHaveAttribute("href", siteProfile.socialLinks?.[1].href ?? "");
+  await expect(
+    page.getByRole("contentinfo").getByRole("link", { name: "Writing" }),
+  ).toHaveCount(0);
+});
+
+test("homepage reduces card motion when the user prefers reduced motion", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const transitionsDisabled = await page
+    .locator("[data-blog-card]")
+    .first()
+    .evaluate((element) =>
+      getComputedStyle(element)
+        .transitionDuration.split(",")
+        .every((value) => parseFloat(value) === 0)
+    );
+
+  expect(transitionsDisabled).toBe(true);
+});
+
+test("home hero keeps the portrait above the heading on mobile", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const portrait = page.getByRole("img", {
+    name: `Portrait of ${siteProfile.name}`,
+  });
+  const heading = page.getByRole("heading", {
+    level: 1,
+    name: new RegExp(siteProfile.heroHeadline),
+  });
+
+  await expect(portrait).toBeVisible();
+  await expect(heading).toBeVisible();
+
+  const portraitBox = await portrait.boundingBox();
+  const headingBox = await heading.boundingBox();
+
+  expect(portraitBox).not.toBeNull();
+  expect(headingBox).not.toBeNull();
+  expect((portraitBox?.y ?? 0) + (portraitBox?.height ?? 0)).toBeLessThan(
+    headingBox?.y ?? 0,
+  );
+});
+
 test("representative mock blog posts render full article pages", async ({
   page,
 }) => {
@@ -52,7 +127,12 @@ test("representative mock blog posts render full article pages", async ({
         name: post.title,
       }),
     ).toBeVisible();
+    await expect(page.getByRole("link", { name: "Back to home" })).toHaveAttribute(
+      "href",
+      "/#latest-writing",
+    );
     await expect(page.getByText(post.subtitle ?? "")).toBeVisible();
+    await expect(page.getByRole("img", { name: post.title })).toBeVisible();
   }
 });
 
@@ -62,13 +142,13 @@ test("theme navigation works from the navbar", async ({ page }) => {
   const themeButton = page.getByRole("button", { name: "Theme menu" });
 
   await expect(themeButton).toBeEnabled({ timeout: 15000 });
-  await themeButton.click();
-  await expect(page.getByRole("menu")).toBeVisible();
+  await themeButton.focus();
+  await page.keyboard.press("Enter");
   await page.getByRole("menuitem", { name: "Dark" }).click();
   await expect(page.locator("html")).toHaveClass(/dark/);
 
-  await themeButton.click();
-  await expect(page.getByRole("menu")).toBeVisible();
+  await themeButton.focus();
+  await page.keyboard.press("Enter");
   await page.getByRole("menuitem", { name: "Light" }).click();
   await expect(page.locator("html")).not.toHaveClass(/dark/);
 });
