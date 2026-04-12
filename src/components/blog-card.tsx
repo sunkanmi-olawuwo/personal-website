@@ -5,9 +5,12 @@ import Image from "next/image";
 
 type Props = {
   post: PostMetadata;
+  loading?: "eager" | "lazy";
 };
 
-export default function BlogCard({ post }: Props) {
+export default function BlogCard({ post, loading }: Props) {
+  const usesRemoteMockImage = post.coverImage.url.includes("images.unsplash.com/");
+
   return (
     <Card className="flex flex-col">
       <CardHeader>
@@ -18,6 +21,8 @@ export default function BlogCard({ post }: Props) {
             alt={post.title}
             className="object-cover"
             sizes="(min-width: 1024px) 33vw, 100vw"
+            loading={loading}
+            unoptimized={usesRemoteMockImage}
           />
         </div>
       </CardHeader>
@@ -35,6 +40,7 @@ export default function BlogCard({ post }: Props) {
               width={28}
               height={28}
               className="h-7 w-7 rounded-full object-cover"
+              unoptimized={post.author.profilePicture.includes("images.unsplash.com/")}
             />
           )}{" "}
           {post.author.name}

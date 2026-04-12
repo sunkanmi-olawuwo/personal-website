@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { mockPostEdges } from "../../src/lib/mock-blog-data";
+
 const hasLiveHashnodeConfig = Boolean(
   process.env.PLAYWRIGHT_LIVE === "1" &&
     process.env.NEXT_PUBLIC_HASHNODE_ENDPOINT &&
@@ -19,11 +21,9 @@ test.describe("Hashnode live smoke @live", () => {
   });
 
   test("home page renders non-fallback blog content", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/", { waitUntil: "domcontentloaded" });
 
-    await expect(
-      page.getByText("Connect your Hashnode publication"),
-    ).toHaveCount(0);
+    await expect(page.getByText(mockPostEdges[0].node.title)).toHaveCount(0);
     expect(await page.getByRole("heading").count()).toBeGreaterThan(0);
   });
 
@@ -33,11 +33,11 @@ test.describe("Hashnode live smoke @live", () => {
       "Set PLAYWRIGHT_HASHNODE_SMOKE_SLUG to run the live slug smoke test.",
     );
 
-    await page.goto(`/${process.env.PLAYWRIGHT_HASHNODE_SMOKE_SLUG}`);
+    await page.goto(`/${process.env.PLAYWRIGHT_HASHNODE_SMOKE_SLUG}`, {
+      waitUntil: "domcontentloaded",
+    });
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(
-      page.getByText("Connect your Hashnode publication"),
-    ).toHaveCount(0);
+    await expect(page.getByText(mockPostEdges[0].node.title)).toHaveCount(0);
   });
 });

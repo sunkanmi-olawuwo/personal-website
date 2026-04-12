@@ -22,14 +22,11 @@ export default defineConfig({
     command: "npm run start -- --hostname 127.0.0.1 --port 3400",
     url: "http://127.0.0.1:3400",
     reuseExistingServer: false,
-    env: isLiveMode
-      ? stringEnv
-      : {
-          ...stringEnv,
-          NEXT_PUBLIC_HASHNODE_ENDPOINT:
-            stringEnv.NEXT_PUBLIC_HASHNODE_ENDPOINT ?? "https://gql.hashnode.com",
-          NEXT_PUBLIC_HASHNODE_PUBLICATION_ID: "",
-        },
+    env: {
+      ...stringEnv,
+      NEXT_PUBLIC_BLOG_DATA_MODE:
+        stringEnv.NEXT_PUBLIC_BLOG_DATA_MODE ?? (isLiveMode ? "live" : "mock"),
+    },
   },
   projects: [
     {

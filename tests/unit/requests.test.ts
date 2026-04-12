@@ -1,5 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import {
+  getMockPostBySlug,
+  getMockPostsPage,
+  mockPostEdges,
+  mockPostSlugs,
+  mockPublication,
+} from "@/lib/mock-blog-data";
+
 const requestMock = vi.hoisted(() => vi.fn());
 
 vi.mock("graphql-request", () => ({
@@ -20,6 +28,7 @@ async function importRequests(
   vi.resetModules();
 
   process.env = { ...ORIGINAL_ENV };
+  delete process.env.NEXT_PUBLIC_BLOG_DATA_MODE;
   delete process.env.NEXT_PUBLIC_HASHNODE_ENDPOINT;
   delete process.env.NEXT_PUBLIC_HASHNODE_PUBLICATION_ID;
 
@@ -41,33 +50,34 @@ afterEach(() => {
 });
 
 describe("requests", () => {
-  it("returns the fallback blog name when Hashnode config is missing", async () => {
-    const { getBlogName } = await importRequests();
-
-    await expect(getBlogName()).resolves.toEqual({
-      title: "Personal Website",
-      displayTitle: "Personal Website",
-      favicon: "/favicon.ico",
+  it("returns mock blog data in mock mode without calling Hashnode", async () => {
+    const { getBlogName } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "mock",
     });
+
+    await expect(getBlogName()).resolves.toEqual(mockPublication);
     expect(requestMock).not.toHaveBeenCalled();
   });
 
-  it("returns the fallback blog name when the request fails", async () => {
+  it("returns mock blog data in auto mode when Hashnode config is missing", async () => {
+    const { getBlogName } = await importRequests();
+
+    await expect(getBlogName()).resolves.toEqual(mockPublication);
+    expect(requestMock).not.toHaveBeenCalled();
+  });
+
+  it("returns mock blog data in auto mode when the request fails", async () => {
     requestMock.mockRejectedValueOnce(new Error("network down"));
     const { getBlogName } = await importRequests({
       NEXT_PUBLIC_HASHNODE_ENDPOINT: "https://gql.hashnode.com",
       NEXT_PUBLIC_HASHNODE_PUBLICATION_ID: "publication-id",
     });
 
-    await expect(getBlogName()).resolves.toEqual({
-      title: "Personal Website",
-      displayTitle: "Personal Website",
-      favicon: "/favicon.ico",
-    });
+    await expect(getBlogName()).resolves.toEqual(mockPublication);
     expect(requestMock).toHaveBeenCalledOnce();
   });
 
-  it("returns live blog data when the request succeeds", async () => {
+  it("returns live blog data when auto mode request succeeds", async () => {
     requestMock.mockResolvedValueOnce({
       publication: {
         title: "Live Title",
@@ -87,36 +97,61 @@ describe("requests", () => {
     });
   });
 
-  it("returns fallback posts when Hashnode config is missing", async () => {
-    const { getPosts } = await importRequests();
+  it("throws in live mode when Hashnode config is missing", async () => {
+    const { getBlogName } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "live",
+    });
 
-    await expect(getPosts({ first: 9 })).resolves.toEqual([
-      expect.objectContaining({
-        cursor: "fallback-welcome",
-        node: expect.objectContaining({
-          title: "Connect your Hashnode publication",
-          slug: "welcome",
-        }),
-      }),
-    ]);
+    await expect(getBlogName()).rejects.toThrow(
+      "Live blog data mode requires NEXT_PUBLIC_HASHNODE_ENDPOINT and NEXT_PUBLIC_HASHNODE_PUBLICATION_ID.",
+    );
+  });
+
+  it("surfaces live mode request failures", async () => {
+    requestMock.mockRejectedValueOnce(new Error("network down"));
+    const { getBlogName } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "live",
+      NEXT_PUBLIC_HASHNODE_ENDPOINT: "https://gql.hashnode.com",
+      NEXT_PUBLIC_HASHNODE_PUBLICATION_ID: "publication-id",
+    });
+
+    await expect(getBlogName()).rejects.toThrow("network down");
+  });
+
+  it("returns the first mock posts page in mock mode", async () => {
+    const { getPosts } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "mock",
+    });
+
+    await expect(getPosts({ first: 9 })).resolves.toEqual(
+      getMockPostsPage({ first: 9 }),
+    );
     expect(requestMock).not.toHaveBeenCalled();
   });
 
-  it("returns fallback posts when the request fails", async () => {
+  it("returns the next mock posts page with a stable cursor", async () => {
+    const { getPosts } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "mock",
+    });
+
+    await expect(
+      getPosts({ first: 9, pageParam: mockPostEdges[8].cursor }),
+    ).resolves.toEqual(getMockPostsPage({ first: 9, pageParam: mockPostEdges[8].cursor }));
+  });
+
+  it("returns mock posts in auto mode when the request fails", async () => {
     requestMock.mockRejectedValueOnce(new Error("network down"));
     const { getPosts } = await importRequests({
       NEXT_PUBLIC_HASHNODE_ENDPOINT: "https://gql.hashnode.com",
       NEXT_PUBLIC_HASHNODE_PUBLICATION_ID: "publication-id",
     });
 
-    await expect(getPosts({ first: 9 })).resolves.toEqual([
-      expect.objectContaining({
-        cursor: "fallback-welcome",
-      }),
-    ]);
+    await expect(getPosts({ first: 9 })).resolves.toEqual(
+      getMockPostsPage({ first: 9 }),
+    );
   });
 
-  it("returns live posts when the request succeeds", async () => {
+  it("returns live posts when auto mode request succeeds", async () => {
     requestMock.mockResolvedValueOnce({
       publication: {
         posts: {
@@ -155,20 +190,39 @@ describe("requests", () => {
     ]);
   });
 
-  it("returns the fallback welcome post when offline", async () => {
-    const { getPostBySlug } = await importRequests();
+  it("returns a mock post by slug in mock mode", async () => {
+    const { getPostBySlug } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "mock",
+    });
 
-    await expect(getPostBySlug("welcome")).resolves.toEqual(
-      expect.objectContaining({
-        title: "Connect your Hashnode publication",
-      }),
+    await expect(getPostBySlug(mockPostSlugs[0])).resolves.toEqual(
+      getMockPostBySlug(mockPostSlugs[0]),
     );
   });
 
-  it("returns null for an unknown slug when offline", async () => {
-    const { getPostBySlug } = await importRequests();
+  it("returns null for an unknown slug in mock mode", async () => {
+    const { getPostBySlug } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "mock",
+    });
 
     await expect(getPostBySlug("missing-post")).resolves.toBeNull();
+  });
+
+  it("resolves every mock slug to a full post", async () => {
+    const { getPostBySlug } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "mock",
+    });
+
+    for (const slug of mockPostSlugs) {
+      await expect(getPostBySlug(slug)).resolves.toEqual(
+        expect.objectContaining({
+          title: expect.any(String),
+          content: expect.objectContaining({
+            html: expect.stringContaining("<p>"),
+          }),
+        }),
+      );
+    }
   });
 
   it("returns a live post when the request succeeds", async () => {
@@ -187,6 +241,7 @@ describe("requests", () => {
       },
     });
     const { getPostBySlug } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "live",
       NEXT_PUBLIC_HASHNODE_ENDPOINT: "https://gql.hashnode.com",
       NEXT_PUBLIC_HASHNODE_PUBLICATION_ID: "publication-id",
     });
@@ -199,8 +254,12 @@ describe("requests", () => {
     );
   });
 
-  it("throws when subscribing without Hashnode config", async () => {
-    const { subscribeToNewsletter } = await importRequests();
+  it("throws when subscribing in mock mode", async () => {
+    const { subscribeToNewsletter } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "mock",
+      NEXT_PUBLIC_HASHNODE_ENDPOINT: "https://gql.hashnode.com",
+      NEXT_PUBLIC_HASHNODE_PUBLICATION_ID: "publication-id",
+    });
 
     await expect(
       subscribeToNewsletter("reader@example.com"),
@@ -210,11 +269,12 @@ describe("requests", () => {
     expect(requestMock).not.toHaveBeenCalled();
   });
 
-  it("submits the newsletter request when Hashnode config exists", async () => {
+  it("submits the newsletter request when Hashnode config exists outside mock mode", async () => {
     requestMock.mockResolvedValueOnce({
       subscribeToNewsletter: { status: "PENDING" },
     });
     const { subscribeToNewsletter } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "live",
       NEXT_PUBLIC_HASHNODE_ENDPOINT: "https://gql.hashnode.com",
       NEXT_PUBLIC_HASHNODE_PUBLICATION_ID: "publication-id",
     });
