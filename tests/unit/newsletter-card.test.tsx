@@ -11,6 +11,7 @@ const toastMock = vi.hoisted(() => ({
 
 vi.mock("@/lib/env", () => ({
   isHashnodeConfigured: false,
+  isNewsletterConfigured: false,
 }));
 
 vi.mock("@/lib/requests", () => ({

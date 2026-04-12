@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+import { mockPostEdges, mockPublication } from "../../src/lib/mock-blog-data";
+
 async function seedNewsletterPreference(page: Page) {
   await page.addInitScript(() => {
     window.localStorage.setItem("newsletter", "playwright@example.com");
@@ -26,7 +28,7 @@ test("newsletter dialog appears for new visitors and can be dismissed", async ({
   page,
 }) => {
   await clearNewsletterPreference(page);
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(
     page.getByRole("heading", { name: "Join the newsletter!" }),
@@ -42,10 +44,10 @@ test("navbar keeps the core navigation affordances available", async ({
   page,
 }) => {
   await seedNewsletterPreference(page);
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(
-    page.getByRole("link", { name: "Personal Website" }).first(),
+    page.getByRole("link", { name: mockPublication.displayTitle }).first(),
   ).toHaveAttribute("href", "/");
   await expect(page.getByRole("button", { name: "Theme menu" })).toBeVisible();
   await expect(page.getByRole("link", { name: "GitHub" })).toHaveAttribute(
@@ -62,7 +64,7 @@ test("offline home page has no serious accessibility violations", async ({
   page,
 }) => {
   await seedNewsletterPreference(page);
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expectNoSeriousAccessibilityViolations(page);
 });
@@ -71,7 +73,9 @@ test("offline post page has no serious accessibility violations", async ({
   page,
 }) => {
   await seedNewsletterPreference(page);
-  await page.goto("/welcome");
+  await page.goto(`/${mockPostEdges[0].node.slug}`, {
+    waitUntil: "domcontentloaded",
+  });
 
   await expectNoSeriousAccessibilityViolations(page);
 });

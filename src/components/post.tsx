@@ -21,16 +21,19 @@ export default function Post({ slug }: Props) {
 
   if (!data) return notFound();
 
+  const usesRemoteMockImage = data.coverImage.url.includes("images.unsplash.com/");
+
   return (
     <div>
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg">
         <Image
           fill
-          priority
+          preload
           src={data.coverImage.url}
           alt={data.title}
           className="object-cover"
           sizes="100vw"
+          unoptimized={usesRemoteMockImage}
         />
       </div>
       <h1 className="text-4xl lg:text-6xl text-center leading-relaxed font-bold mt-5">
@@ -47,6 +50,7 @@ export default function Post({ slug }: Props) {
             width={40}
             height={40}
             className="mr-5 rounded-full object-cover"
+            unoptimized={data.author.profilePicture.includes("images.unsplash.com/")}
           />
         )}
         {data.author.name}

@@ -1,33 +1,50 @@
-# Next.js blog powered by Hashnode Headless
+# Next.js Blog Powered by Hashnode Headless
 
-This is a [Next.js](https://nextjs.org/) blog powered by [Hashnode Headless](https://hashnode.com/headless). This project is associated to a YouTube video demonstrating how to build this blog step-by-step (video coming soon).
+This project is a Next.js blog that can run in three content modes:
 
-## Configuration
+- `auto`: use Hashnode when configured, otherwise fall back to realistic mock content
+- `mock`: always use local mock blog data
+- `live`: require a working Hashnode connection
 
-First, install dependencies using the following command:
+## Setup
+
+Install dependencies:
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
 ```
 
-Copy the contents of the `.env.example` file to a new file called `.env.local` and fill in the required values.
-
-## Running the project
-
-Use the following command to run the development server:
+Copy `.env.example` to `.env.local` and choose a content mode:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
+NEXT_PUBLIC_BLOG_DATA_MODE=mock
+NEXT_PUBLIC_HASHNODE_ENDPOINT=https://gql.hashnode.com
+NEXT_PUBLIC_HASHNODE_PUBLICATION_ID=
 ```
 
-## Conclusion
+## Running Locally
 
-Support this project by starring. Any contributions are welcome!
+Use mock content for UI and design work:
+
+```bash
+npm run dev
+```
+
+If you want live Hashnode data instead, set:
+
+```bash
+NEXT_PUBLIC_BLOG_DATA_MODE=live
+NEXT_PUBLIC_HASHNODE_PUBLICATION_ID=your-publication-id
+```
+
+If you leave `NEXT_PUBLIC_BLOG_DATA_MODE=auto`, the app will use live Hashnode data when the env vars are present and fall back to mock content when they are not.
+
+## Testing
+
+Run the full local test suite:
+
+```bash
+npm test
+```
+
+The default Playwright run uses explicit mock mode so the blog pages stay stable and previewable without an external content dependency.

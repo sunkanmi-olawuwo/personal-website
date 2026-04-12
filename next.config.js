@@ -6,6 +6,10 @@ const nextConfig = {
         hostname: "cdn.hashnode.com",
         protocol: "https",
       },
+      {
+        hostname: "images.unsplash.com",
+        protocol: "https",
+      },
     ],
   },
 };

@@ -5,7 +5,7 @@ import { ClientError } from "graphql-request";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { isHashnodeConfigured } from "@/lib/env";
+import { isNewsletterConfigured } from "@/lib/env";
 import { subscribeToNewsletter } from "@/lib/requests";
 
 import { Button } from "./ui/button";
@@ -55,7 +55,7 @@ export default function NewsletterCard() {
   }
 
   async function handleSubscribe() {
-    if (!isHashnodeConfigured) {
+    if (!isNewsletterConfigured) {
       toast.info("Configure the Hashnode environment variables to enable newsletter signups.");
       return;
     }

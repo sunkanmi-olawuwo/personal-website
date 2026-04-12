@@ -14,12 +14,17 @@ export default function Posts() {
       lastPage.length < 9 ? undefined : lastPage[lastPage.length - 1].cursor,
     initialPageParam: "",
   });
+  const postEdges = data?.pages.flatMap((group) => group ?? []) ?? [];
 
   return (
     <>
-      {data?.pages.map((group) =>
-        group?.map((post) => <BlogCard key={post.cursor} post={post.node} />)
-      )}
+      {postEdges.map((post, index) => (
+        <BlogCard
+          key={post.cursor}
+          post={post.node}
+          loading={index < 3 ? "eager" : undefined}
+        />
+      ))}
       <div className="col-span-1 lg:col-span-3 w-full flex justify-center my-5">
         <Button
           className="w-full"
