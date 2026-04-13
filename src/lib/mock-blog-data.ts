@@ -69,6 +69,23 @@ function article(intro: string, middle: string, closing: string) {
   return `<p>${intro}</p><p>${middle}</p><p>${closing}</p>`;
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function figure(imageUrl: string, alt: string, caption: string) {
+  return `<figure><img src="${imageUrl}" alt="${alt}" loading="lazy" /><figcaption>${caption}</figcaption></figure>`;
+}
+
+function codeBlock(code: string, language: string) {
+  return `<pre><code class="language-${language}">${escapeHtml(code)}</code></pre>`;
+}
+
 export const mockPublication = {
   title: "Sunkanmi Olawuwo",
   displayTitle: "Sunkanmi Olawuwo",
@@ -424,11 +441,28 @@ const mockPostRecords: MockPostRecord[] = [
         "Mock content becomes useful when it looks believable, paginates properly, and exercises the same contracts as production data.",
       coverImage: { url: cover("photo-1496171367470-9ed9a91ea931") },
       content: {
-        html: article(
-          "A single placeholder card is enough to prove that a route renders. It is not enough to help a team refine hierarchy, spacing, pagination, or the feel of a real reading experience.",
-          "The mock layer gets dramatically more useful once it mirrors the live contract: publication metadata, paginated edges, realistic article bodies, and stable slugs that behave like the real thing.",
-          "That is the point where design, engineering, and testing can all work against the same believable preview instead of waiting on an external content source to be available."
-        ),
+        html: [
+          "<p>A single placeholder card is enough to prove that a route renders. It is not enough to help a team refine hierarchy, spacing, pagination, or the feel of a real reading experience.</p>",
+          figure(
+            cover("photo-1461749280684-dccba630e2f6"),
+            "A laptop showing mock blog content with rich media blocks.",
+            "Good mock content should include the kinds of media real posts use: images, captions, inline code, and full code blocks."
+          ),
+          "<p>The mock layer gets dramatically more useful once it mirrors the live contract: publication metadata, paginated edges, realistic article bodies, stable slugs, and details like <code>tagSlugs</code> that actually change the reading experience.</p>",
+          codeBlock(
+            `export function getMockPostsPage({ first = 9, pageParam = "", tagSlug }: GetPostsArgs) {
+  const filteredPostEdges = tagSlug
+    ? mockPostEdges.filter((post) =>
+        post.node.tags.some((tag) => tag.slug === tagSlug),
+      )
+    : mockPostEdges;
+
+  return filteredPostEdges.slice(0, first);
+}`,
+            "ts"
+          ),
+          "<p>That is the point where design, engineering, and testing can all work against the same believable preview instead of waiting on an external content source to be available.</p>",
+        ].join(""),
       },
       author: MOCK_AUTHOR,
       tags: tags("testing", "aiApplications"),

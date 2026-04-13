@@ -46,12 +46,8 @@ test("home footer mirrors the digest layout with linkedin and github links", asy
 }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await expect(
-    page.getByRole("heading", {
-      level: 2,
-      name: siteProfile.newsletterHeading ?? "",
-    }),
-  ).toBeVisible();
+  await expect(page.getByText(siteProfile.newsletterEyebrow ?? "")).toBeVisible();
+  await expect(page.getByText(siteProfile.newsletterSummary ?? "")).toBeVisible();
   await expect(page.getByPlaceholder("email@address.com")).toBeVisible();
   await expect(
     page.getByRole("contentinfo").getByRole("link", { name: "LinkedIn" }),
@@ -137,18 +133,17 @@ test("representative mock blog posts render full article pages", async ({
 });
 
 test("theme navigation works from the navbar", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  const themeButton = page.getByRole("button", { name: "Theme menu" });
+  const themeButton = page.getByRole("button", {
+    name: /switch to (dark|light) theme|toggle theme/i,
+  });
 
   await expect(themeButton).toBeEnabled({ timeout: 15000 });
-  await themeButton.focus();
-  await page.keyboard.press("Enter");
-  await page.getByRole("menuitem", { name: "Dark" }).click();
+  await themeButton.click();
   await expect(page.locator("html")).toHaveClass(/dark/);
 
-  await themeButton.focus();
-  await page.keyboard.press("Enter");
-  await page.getByRole("menuitem", { name: "Light" }).click();
+  await themeButton.click();
   await expect(page.locator("html")).not.toHaveClass(/dark/);
 });
