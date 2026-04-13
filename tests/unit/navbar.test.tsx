@@ -26,7 +26,7 @@ async function renderNavbar(
 }
 
 describe("Navbar", () => {
-  it("renders the brand link, theme menu, and GitHub link", async () => {
+  it("renders the brand link, theme toggle, and GitHub link", async () => {
     await renderNavbar({
       displayTitle: "Design System Journal",
       title: "Fallback Title",
@@ -36,7 +36,7 @@ describe("Navbar", () => {
       screen.getByRole("link", { name: "Design System Journal" }),
     ).toHaveAttribute("href", "/");
     expect(
-      screen.getByRole("button", { name: "Theme menu" }),
+      screen.getByRole("button", { name: /theme/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "GitHub" })).toHaveAttribute(
       "href",

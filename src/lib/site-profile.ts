@@ -10,12 +10,14 @@ export type ProfileLink = {
   external?: boolean;
 };
 
+export type BrandLinkVariant = "underline" | "lift" | "shine";
+
 export type SiteProfile = {
   name: string;
+  brandLinkVariant: BrandLinkVariant;
   heroHeadline: string;
   heroSummary: string;
   newsletterEyebrow?: string;
-  newsletterHeading?: string;
   newsletterSummary?: string;
   portraitSrc: string;
   primaryCta: ProfileCta;
@@ -25,13 +27,13 @@ export type SiteProfile = {
 
 export const siteProfile = {
   name: "Sunkanmi Olawuwo",
+  brandLinkVariant: "shine",
   heroHeadline: "Building reliable software systems for real-world products.",
   heroSummary:
     "I write about backend engineering, AI systems, cloud architecture, testing, and the practical decisions behind production software, explained in simple and practical terms.",
   newsletterEyebrow: "The weekly digest",
-  newsletterHeading: "Notes on backend, AI, and software in production.",
   newsletterSummary:
-    "Join the weekly digest for practical essays on backend engineering, AI application development, cloud architecture, testing, and the tradeoffs behind software that has to work in production.",
+    "Practical essays on backend engineering, AI application development, cloud architecture, testing, and the tradeoffs behind software that has to scale.",
   portraitSrc: "/sunkanmi-olawuwo-headshot-cropped.png",
   primaryCta: {
     label: "Articles",

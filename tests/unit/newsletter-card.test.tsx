@@ -24,7 +24,45 @@ vi.mock("sonner", () => ({
 
 import NewsletterCard from "@/components/newsletter-card";
 
-function renderNewsletterCard() {
+const DESKTOP_QUERY = "(min-width: 1024px)";
+
+function setDesktopViewport(matches: boolean) {
+  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    matches: query === DESKTOP_QUERY ? matches : false,
+    media: query,
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
+}
+
+function setScrollPosition({
+  innerHeight = 1_000,
+  scrollHeight = 2_000,
+  scrollY = 0,
+}: {
+  innerHeight?: number;
+  scrollHeight?: number;
+  scrollY?: number;
+} = {}) {
+  Object.defineProperty(window, "innerHeight", {
+    configurable: true,
+    value: innerHeight,
+  });
+  Object.defineProperty(window, "scrollY", {
+    configurable: true,
+    value: scrollY,
+  });
+  Object.defineProperty(document.documentElement, "scrollHeight", {
+    configurable: true,
+    value: scrollHeight,
+  });
+}
+
+function renderNewsletterCard(newsletterEnabled = true) {
   const queryClient = new QueryClient({
     defaultOptions: {
       mutations: { retry: false },
@@ -34,72 +72,136 @@ function renderNewsletterCard() {
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <NewsletterCard />
+      <NewsletterCard newsletterEnabled={newsletterEnabled} />
     </QueryClientProvider>,
   );
 }
 
 describe("NewsletterCard", () => {
-  it("opens after the timer elapses when there is no newsletter key", async () => {
+  it("stays hidden on non-desktop viewports", async () => {
     vi.useFakeTimers();
+    setDesktopViewport(false);
+    setScrollPosition();
 
-    renderNewsletterCard();
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    renderNewsletterCard(true);
 
     await act(async () => {
-      vi.advanceTimersByTime(5000);
+      vi.advanceTimersByTime(45_000);
+      fireEvent.scroll(window);
     });
 
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Join the newsletter!" }),
+      screen.queryByRole("heading", { name: "New essays, no noise." }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("opens after the reader scrolls past the threshold on desktop", async () => {
+    setDesktopViewport(true);
+    setScrollPosition({ scrollY: 0 });
+
+    renderNewsletterCard(true);
+
+    setScrollPosition({ scrollY: 700 });
+    await act(async () => {
+      fireEvent.scroll(window);
+    });
+
+    expect(
+      screen.getByRole("heading", { name: "New essays, no noise." }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Subscribe" })).toBeDisabled();
+  });
+
+  it("opens after the timer elapses when the reader has not scrolled", async () => {
+    vi.useFakeTimers();
+    setDesktopViewport(true);
+    setScrollPosition();
+
+    renderNewsletterCard(true);
+
+    expect(
+      screen.queryByRole("heading", { name: "New essays, no noise." }),
+    ).not.toBeInTheDocument();
+
+    await act(async () => {
+      vi.advanceTimersByTime(45_000);
+    });
+
+    expect(
+      screen.getByRole("heading", { name: "New essays, no noise." }),
     ).toBeInTheDocument();
   });
 
-  it("does not open when the newsletter key already exists", async () => {
-    vi.useFakeTimers();
-    window.localStorage.setItem("newsletter", "reader@example.com");
+  it("remembers dismissals for 30 days", async () => {
+    setDesktopViewport(true);
+    setScrollPosition();
 
-    renderNewsletterCard();
+    const firstRender = renderNewsletterCard(true);
 
+    setScrollPosition({ scrollY: 700 });
     await act(async () => {
-      vi.advanceTimersByTime(5000);
+      fireEvent.scroll(window);
     });
 
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-  });
-
-  it("shows the offline toast instead of submitting when config is missing", async () => {
-    vi.useFakeTimers();
-
-    renderNewsletterCard();
-
-    await act(async () => {
-      vi.advanceTimersByTime(5000);
-    });
-
-    fireEvent.change(screen.getByPlaceholderText("Email"), {
-      target: { value: "reader@example.com" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Subscribe" }));
-
-    expect(toastMock.info).toHaveBeenCalledWith(
-      "Configure the Hashnode environment variables to enable newsletter signups.",
+    fireEvent.click(
+      screen.getByRole("button", { name: "Dismiss newsletter prompt" }),
     );
-    expect(subscribeToNewsletterMock).not.toHaveBeenCalled();
-  });
 
-  it("disables submit while the email field is empty", async () => {
-    vi.useFakeTimers();
+    expect(
+      Number(window.localStorage.getItem("newsletterDismissedAt")),
+    ).toBeGreaterThan(0);
+    expect(
+      screen.queryByRole("heading", { name: "New essays, no noise." }),
+    ).not.toBeInTheDocument();
 
-    renderNewsletterCard();
+    firstRender.unmount();
+
+    setScrollPosition();
+    renderNewsletterCard(true);
+    setScrollPosition({ scrollY: 700 });
 
     await act(async () => {
-      vi.advanceTimersByTime(5000);
+      fireEvent.scroll(window);
     });
 
     expect(
-      screen.getByRole("button", { name: "Subscribe" }),
-    ).toBeDisabled();
+      screen.queryByRole("heading", { name: "New essays, no noise." }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not reopen when the session has already seen it", async () => {
+    vi.useFakeTimers();
+    setDesktopViewport(true);
+    setScrollPosition();
+    window.sessionStorage.setItem("newsletterNudgeShown", "1");
+
+    renderNewsletterCard(true);
+
+    await act(async () => {
+      vi.advanceTimersByTime(45_000);
+      fireEvent.scroll(window);
+    });
+
+    expect(
+      screen.queryByRole("heading", { name: "New essays, no noise." }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not open when the reader is already subscribed", async () => {
+    vi.useFakeTimers();
+    setDesktopViewport(true);
+    setScrollPosition();
+    window.localStorage.setItem("newsletter", "reader@example.com");
+
+    renderNewsletterCard(true);
+
+    await act(async () => {
+      vi.advanceTimersByTime(45_000);
+      fireEvent.scroll(window);
+    });
+
+    expect(
+      screen.queryByRole("heading", { name: "New essays, no noise." }),
+    ).not.toBeInTheDocument();
   });
 });

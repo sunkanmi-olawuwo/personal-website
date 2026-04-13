@@ -1,4 +1,4 @@
-import { GetPostsArgs, PostDetails, PostEdge } from "./types";
+import { GetPostsArgs, PostDetails, PostEdge, Tag } from "./types";
 
 const MOCK_AUTHOR = {
   name: "Sunkanmi Olawuwo",
@@ -11,6 +11,55 @@ type MockPostRecord = {
   node: PostEdge["node"];
   details: PostDetails;
 };
+
+const MOCK_TAGS = {
+  accessibility: {
+    id: "tag-accessibility",
+    name: "Accessibility",
+    slug: "accessibility",
+  },
+  aiApplications: {
+    id: "tag-ai-applications",
+    name: "AI Applications",
+    slug: "ai-applications",
+  },
+  backend: {
+    id: "tag-backend",
+    name: "Backend",
+    slug: "backend",
+  },
+  cloudArchitecture: {
+    id: "tag-cloud-architecture",
+    name: "Cloud Architecture",
+    slug: "cloud-architecture",
+  },
+  designSystems: {
+    id: "tag-design-systems",
+    name: "Design Systems",
+    slug: "design-systems",
+  },
+  developerExperience: {
+    id: "tag-developer-experience",
+    name: "Developer Experience",
+    slug: "developer-experience",
+  },
+  nextjs: {
+    id: "tag-nextjs",
+    name: "Next.js",
+    slug: "nextjs",
+  },
+  testing: {
+    id: "tag-testing",
+    name: "Testing",
+    slug: "testing",
+  },
+} satisfies Record<string, Tag>;
+
+type MockTagKey = keyof typeof MOCK_TAGS;
+
+function tags(...tagKeys: MockTagKey[]) {
+  return tagKeys.map((tagKey) => MOCK_TAGS[tagKey]);
+}
 
 function cover(photoId: string) {
   return `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1600&h=900&q=80`;
@@ -39,6 +88,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1516321318423-f06f85e504b3") },
       author: MOCK_AUTHOR,
+      tags: tags("designSystems", "developerExperience"),
     },
     details: {
       title: "Building a design system without stalling product delivery",
@@ -53,6 +103,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("designSystems", "developerExperience"),
     },
   },
   {
@@ -67,6 +118,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1498050108023-c5249f4df085") },
       author: MOCK_AUTHOR,
+      tags: tags("nextjs", "developerExperience"),
     },
     details: {
       title: "Shipping a personal site on Next.js 16 without over-engineering it",
@@ -81,6 +133,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("nextjs", "developerExperience"),
     },
   },
   {
@@ -95,6 +148,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1515879218367-8466d910aaa4") },
       author: MOCK_AUTHOR,
+      tags: tags("testing", "backend"),
     },
     details: {
       title: "Testing the happy path is not enough",
@@ -109,6 +163,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("testing", "backend"),
     },
   },
   {
@@ -123,6 +178,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1516382799247-87df95d790b7") },
       author: MOCK_AUTHOR,
+      tags: tags("backend", "nextjs"),
     },
     details: {
       title: "When server components actually help",
@@ -137,6 +193,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("backend", "nextjs"),
     },
   },
   {
@@ -150,6 +207,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1517180102446-f3ece451e9d8") },
       author: MOCK_AUTHOR,
+      tags: tags("designSystems", "developerExperience"),
     },
     details: {
       title: "Designing loading states that feel intentional",
@@ -163,6 +221,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("designSystems", "developerExperience"),
     },
   },
   {
@@ -177,6 +236,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1516321497487-e288fb19713f") },
       author: MOCK_AUTHOR,
+      tags: tags("designSystems", "developerExperience"),
     },
     details: {
       title: "Design tokens that scale with the team",
@@ -191,6 +251,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("designSystems", "developerExperience"),
     },
   },
   {
@@ -205,6 +266,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1522071820081-009f0129c71c") },
       author: MOCK_AUTHOR,
+      tags: tags("backend", "developerExperience"),
     },
     details: {
       title: "Small refactors that pay rent every week",
@@ -219,6 +281,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("backend", "developerExperience"),
     },
   },
   {
@@ -233,6 +296,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1455390582262-044cdead277a") },
       author: MOCK_AUTHOR,
+      tags: tags("developerExperience", "backend"),
     },
     details: {
       title: "Writing docs that onboard people faster",
@@ -247,6 +311,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("developerExperience", "backend"),
     },
   },
   {
@@ -261,6 +326,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1517694712202-14dd9538aa97") },
       author: MOCK_AUTHOR,
+      tags: tags("testing", "developerExperience"),
     },
     details: {
       title: "How I review pull requests for risk",
@@ -275,6 +341,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("testing", "developerExperience"),
     },
   },
   {
@@ -289,6 +356,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1521737604893-d14cc237f11d") },
       author: MOCK_AUTHOR,
+      tags: tags("backend", "cloudArchitecture"),
     },
     details: {
       title: "Balancing speed and code quality on a small team",
@@ -303,6 +371,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("backend", "cloudArchitecture"),
     },
   },
   {
@@ -317,6 +386,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1484417894907-623942c8ee29") },
       author: MOCK_AUTHOR,
+      tags: tags("accessibility", "designSystems"),
     },
     details: {
       title: "Accessibility fixes that raise the floor for everyone",
@@ -331,6 +401,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("accessibility", "designSystems"),
     },
   },
   {
@@ -345,6 +416,7 @@ const mockPostRecords: MockPostRecord[] = [
       },
       coverImage: { url: cover("photo-1496171367470-9ed9a91ea931") },
       author: MOCK_AUTHOR,
+      tags: tags("testing", "aiApplications"),
     },
     details: {
       title: "Building a mock data layer that is realistic enough for design work",
@@ -359,6 +431,7 @@ const mockPostRecords: MockPostRecord[] = [
         ),
       },
       author: MOCK_AUTHOR,
+      tags: tags("testing", "aiApplications"),
     },
   },
 ];
@@ -376,18 +449,30 @@ const mockPostDetailsBySlug = Object.fromEntries(
 
 export const mockPostSlugs = mockPostEdges.map((post) => post.node.slug);
 
-export function getMockPostsPage({ first = 9, pageParam = "" }: GetPostsArgs) {
+export function getMockPostsPage({
+  first = 9,
+  pageParam = "",
+  tagSlug,
+}: GetPostsArgs) {
+  const filteredPostEdges = tagSlug
+    ? mockPostEdges.filter((post) =>
+        post.node.tags.some((tag) => tag.slug === tagSlug),
+      )
+    : mockPostEdges;
+
   if (!pageParam) {
-    return mockPostEdges.slice(0, first);
+    return filteredPostEdges.slice(0, first);
   }
 
-  const startIndex = mockPostEdges.findIndex((post) => post.cursor === pageParam);
+  const startIndex = filteredPostEdges.findIndex(
+    (post) => post.cursor === pageParam,
+  );
 
   if (startIndex === -1) {
     return [];
   }
 
-  return mockPostEdges.slice(startIndex + 1, startIndex + 1 + first);
+  return filteredPostEdges.slice(startIndex + 1, startIndex + 1 + first);
 }
 
 export function getMockPostBySlug(slug: string) {

@@ -6,7 +6,14 @@ export type PublicationName = {
   };
 };
 
+export type Tag = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
 export type PostMetadata = {
+  id?: string;
   title: string;
   subtitle?: string;
   slug: string;
@@ -20,6 +27,7 @@ export type PostMetadata = {
     name: string;
     profilePicture?: string;
   };
+  tags: Tag[];
 };
 
 export type PostEdge = {
@@ -28,6 +36,7 @@ export type PostEdge = {
 };
 
 export type PostDetails = {
+  id?: string;
   title: string;
   subtitle?: string;
   coverImage: {
@@ -40,6 +49,7 @@ export type PostDetails = {
     name: string;
     profilePicture?: string;
   };
+  tags: Tag[];
 };
 
 export type GetPostsResponse = {
@@ -53,6 +63,7 @@ export type GetPostsResponse = {
 export type GetPostsArgs = {
   first?: number;
   pageParam?: string;
+  tagSlug?: string;
 };
 
 export type SubscribeToNewsletterResponse = {

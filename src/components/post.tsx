@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import TagLink from "./tag-link";
 
 type Props = {
   slug: string;
@@ -39,9 +40,17 @@ export default function Post({ slug }: Props) {
           Back to home
         </Link>
         <div className="space-y-4">
-          <p className="font-display text-xs font-semibold uppercase tracking-[0.32em] text-primary/75">
-           
-          </p>
+          {data.tags.length ? (
+            <div className="flex flex-wrap gap-2">
+              {data.tags.map((tag) => (
+                <TagLink
+                  key={tag.slug}
+                  tag={tag}
+                  className="bg-[hsl(var(--surface)/0.88)]"
+                />
+              ))}
+            </div>
+          ) : null}
           <h1 className="font-display text-4xl font-extrabold leading-[1.02] tracking-[-0.04em] sm:text-5xl lg:text-6xl">
             {data.title}
           </h1>

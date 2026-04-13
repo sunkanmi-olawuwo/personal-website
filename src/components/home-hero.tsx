@@ -28,7 +28,6 @@ export default function HomeHero() {
         <div className="order-2 flex flex-col gap-6 text-center lg:order-1 lg:text-left">
           <div className="flex flex-col gap-4">
             <p className="font-display text-xs font-semibold uppercase tracking-[0.35em] text-primary/80">
-              {siteProfile.name}
             </p>
             <h1
               id="home-hero-title"

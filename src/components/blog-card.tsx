@@ -2,6 +2,7 @@ import { PostMetadata } from "@/lib/types";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import Link from "next/link";
 import Image from "next/image";
+import TagLink from "./tag-link";
 
 type Props = {
   post: PostMetadata;
@@ -39,6 +40,13 @@ export default function BlogCard({ post, loading }: Props) {
         </div>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col p-5 pt-0">
+        {post.tags.length ? (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {post.tags.map((tag) => (
+              <TagLink key={tag.slug} tag={tag} />
+            ))}
+          </div>
+        ) : null}
         <h2 className="font-display text-xl font-bold leading-tight tracking-[-0.03em]">
           <Link
             href={`/${post.slug}`}

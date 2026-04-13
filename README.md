@@ -48,3 +48,5 @@ npm test
 ```
 
 The default Playwright run uses explicit mock mode so the blog pages stay stable and previewable without an external content dependency.
+
+For repeatable live-publication checks, see [docs/live-hashnode-checklist.md](docs/live-hashnode-checklist.md).
