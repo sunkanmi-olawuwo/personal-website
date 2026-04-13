@@ -13,6 +13,8 @@ async function seedNewsletterPreference(page: Page) {
 async function clearNewsletterPreference(page: Page) {
   await page.addInitScript(() => {
     window.localStorage.removeItem("newsletter");
+    window.localStorage.removeItem("newsletterDismissedAt");
+    window.sessionStorage.removeItem("newsletterNudgeShown");
   });
 }
 
@@ -25,21 +27,38 @@ async function expectNoSeriousAccessibilityViolations(page: Page) {
   expect(seriousViolations).toEqual([]);
 }
 
-test("newsletter dialog appears for new visitors and can be dismissed", async ({
+test("newsletter nudge respects the current desktop and mobile behavior", async ({
   page,
-}) => {
+}, testInfo) => {
   await clearNewsletterPreference(page);
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/?newsletterNudge=force", { waitUntil: "domcontentloaded" });
 
+  const isMobileProject = testInfo.project.name.includes("mobile");
+  const nudgeHeading = page.getByRole("heading", {
+    level: 2,
+    name: "New essays, no noise.",
+  });
+
+  if (isMobileProject) {
+    await page.evaluate(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    });
+
+    await expect(nudgeHeading).toHaveCount(0);
+    return;
+  }
+
+  await page.evaluate(() => {
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  });
+
+  await expect(nudgeHeading).toBeVisible({ timeout: 10000 });
   await expect(
-    page.getByRole("heading", { name: "Join the newsletter!" }),
-  ).toBeVisible({ timeout: 10000 });
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByPlaceholder("Email")).toBeVisible();
+    page.getByRole("complementary").getByPlaceholder("email@address.com"),
+  ).toBeVisible();
 
-  await page.getByRole("button", { name: "Close" }).click();
-  await expect(dialog).not.toBeVisible();
+  await page.getByRole("button", { name: "Dismiss newsletter prompt" }).click();
+  await expect(nudgeHeading).not.toBeVisible();
 });
 
 test("navbar keeps the core navigation affordances available", async ({
@@ -49,14 +68,24 @@ test("navbar keeps the core navigation affordances available", async ({
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(
-    page.getByRole("link", { name: mockPublication.displayTitle }).first(),
+    page.getByRole("banner").getByRole("link", {
+      name: mockPublication.displayTitle,
+    }),
   ).toHaveAttribute("href", "/");
-  await expect(page.getByRole("button", { name: "Theme menu" })).toBeVisible();
-  await expect(page.getByRole("banner").getByRole("link", { name: "GitHub" })).toHaveAttribute(
+  await expect(
+    page.getByRole("button", {
+      name: /switch to (dark|light) theme|toggle theme/i,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("banner").getByRole("link", { name: "GitHub" }),
+  ).toHaveAttribute(
     "href",
-    "https://github.com/atharvadeosthale/hashnode-headless-blog",
+    siteProfile.secondaryCta.href,
   );
-  await expect(page.getByRole("banner").getByRole("link", { name: "GitHub" })).toHaveAttribute(
+  await expect(
+    page.getByRole("banner").getByRole("link", { name: "GitHub" }),
+  ).toHaveAttribute(
     "target",
     "_blank",
   );
@@ -71,7 +100,7 @@ test("home hero surfaces the local profile content and latest writing entrypoint
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: new RegExp(siteProfile.heroHeadline),
+      name: siteProfile.heroHeadline,
     }),
   ).toBeVisible();
   await expect(
@@ -79,9 +108,15 @@ test("home hero surfaces the local profile content and latest writing entrypoint
       name: `Portrait of ${siteProfile.name}`,
     }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "Articles" })).toHaveAttribute(
+  await expect(page.getByText(siteProfile.heroSummary)).toBeVisible();
+  await expect(
+    page.getByRole("main").getByRole("link", {
+      name: siteProfile.primaryCta.label,
+      exact: true,
+    }),
+  ).toHaveAttribute(
     "href",
-    "#latest-writing",
+    siteProfile.primaryCta.href,
   );
   await expect(
     page.getByRole("heading", { level: 2, name: "Articles" }),

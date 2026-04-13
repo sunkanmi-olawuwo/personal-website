@@ -3,23 +3,29 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
-const storage = new Map<string, string>();
-const localStorageMock = {
-  getItem: vi.fn((key: string) => storage.get(key) ?? null),
-  setItem: vi.fn((key: string, value: string) => {
-    storage.set(key, value);
-  }),
-  removeItem: vi.fn((key: string) => {
-    storage.delete(key);
-  }),
-  clear: vi.fn(() => {
-    storage.clear();
-  }),
-  key: vi.fn((index: number) => Array.from(storage.keys())[index] ?? null),
-  get length() {
-    return storage.size;
-  },
-};
+function createStorageMock() {
+  const storage = new Map<string, string>();
+
+  return {
+    getItem: vi.fn((key: string) => storage.get(key) ?? null),
+    setItem: vi.fn((key: string, value: string) => {
+      storage.set(key, value);
+    }),
+    removeItem: vi.fn((key: string) => {
+      storage.delete(key);
+    }),
+    clear: vi.fn(() => {
+      storage.clear();
+    }),
+    key: vi.fn((index: number) => Array.from(storage.keys())[index] ?? null),
+    get length() {
+      return storage.size;
+    },
+  };
+}
+
+const localStorageMock = createStorageMock();
+const sessionStorageMock = createStorageMock();
 
 Object.defineProperty(window, "localStorage", {
   configurable: true,
@@ -31,9 +37,20 @@ Object.defineProperty(globalThis, "localStorage", {
   value: localStorageMock,
 });
 
+Object.defineProperty(window, "sessionStorage", {
+  configurable: true,
+  value: sessionStorageMock,
+});
+
+Object.defineProperty(globalThis, "sessionStorage", {
+  configurable: true,
+  value: sessionStorageMock,
+});
+
 afterEach(() => {
   cleanup();
   window.localStorage.clear();
+  window.sessionStorage.clear();
   vi.clearAllMocks();
   vi.useRealTimers();
 });

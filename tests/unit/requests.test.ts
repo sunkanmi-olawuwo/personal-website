@@ -139,6 +139,20 @@ describe("requests", () => {
     ).resolves.toEqual(getMockPostsPage({ first: 9, pageParam: mockPostEdges[8].cursor }));
   });
 
+  it("filters mock posts by tag slug", async () => {
+    const { getPosts } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "mock",
+    });
+
+    const filteredPosts = await getPosts({ first: 9, tagSlug: "testing" });
+
+    expect(filteredPosts).toEqual(
+      getMockPostsPage({ first: 9, tagSlug: "testing" }),
+    );
+    expect(filteredPosts.length).toBeGreaterThan(0);
+    expect(filteredPosts.every((post) => post.node.tags.some((tag) => tag.slug === "testing"))).toBe(true);
+  });
+
   it("returns mock posts in auto mode when the request fails", async () => {
     requestMock.mockRejectedValueOnce(new Error("network down"));
     const { getPosts } = await importRequests({
@@ -168,6 +182,13 @@ describe("requests", () => {
                   name: "Author",
                   profilePicture: "https://example.com/author.jpg",
                 },
+                tags: [
+                  {
+                    id: "tag-testing",
+                    name: "Testing",
+                    slug: "testing",
+                  },
+                ],
               },
             },
           ],
@@ -188,6 +209,33 @@ describe("requests", () => {
         }),
       }),
     ]);
+  });
+
+  it("passes the selected tag slug to the live posts query", async () => {
+    requestMock.mockResolvedValueOnce({
+      publication: {
+        posts: {
+          edges: [],
+        },
+      },
+    });
+    const { getPosts } = await importRequests({
+      NEXT_PUBLIC_BLOG_DATA_MODE: "live",
+      NEXT_PUBLIC_HASHNODE_ENDPOINT: "https://gql.hashnode.com",
+      NEXT_PUBLIC_HASHNODE_PUBLICATION_ID: "publication-id",
+    });
+
+    await expect(getPosts({ first: 9, tagSlug: "testing" })).resolves.toEqual([]);
+    expect(requestMock).toHaveBeenCalledWith(
+      "https://gql.hashnode.com",
+      expect.stringContaining("tagSlugs"),
+      expect.objectContaining({
+        publicationId: "publication-id",
+        first: 9,
+        after: "",
+        tagSlugs: ["testing"],
+      }),
+    );
   });
 
   it("returns a mock post by slug in mock mode", async () => {
@@ -237,6 +285,13 @@ describe("requests", () => {
             name: "Live Author",
             profilePicture: "https://example.com/author.jpg",
           },
+          tags: [
+            {
+              id: "tag-backend",
+              name: "Backend",
+              slug: "backend",
+            },
+          ],
         },
       },
     });

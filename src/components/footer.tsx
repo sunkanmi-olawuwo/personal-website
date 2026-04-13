@@ -13,14 +13,11 @@ export default async function Footer() {
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 pb-10 pt-4 sm:px-6 lg:px-8">
         <section className="section-shell interactive-surface px-5 py-9 sm:px-8 lg:px-12 lg:py-11">
           <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
-            <div className="space-y-4">
+            <div className="space-y-5">
               <p className="font-display text-xs font-semibold uppercase tracking-[0.35em] text-primary/80">
                 {siteProfile.newsletterEyebrow}
               </p>
-              <h2 className="font-display text-3xl font-extrabold tracking-[-0.04em] sm:text-4xl lg:text-5xl">
-                {siteProfile.newsletterHeading}
-              </h2>
-              <p className="mx-auto max-w-2xl text-base leading-8 text-muted-foreground dark:text-foreground/76 sm:text-lg">
+              <p className="mx-auto max-w-2xl text-lg leading-8 text-foreground/88 dark:text-foreground/82 sm:text-xl">
                 {siteProfile.newsletterSummary}
               </p>
             </div>
@@ -47,7 +44,7 @@ export default async function Footer() {
                 href={link.href}
                 target={link.external ? "_blank" : undefined}
                 rel={link.external ? "noreferrer" : undefined}
-                className="interactive-link font-semibold uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground dark:text-foreground/78"
+                className="font-semibold uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground dark:text-foreground/78"
               >
                 {link.label}
               </Link>

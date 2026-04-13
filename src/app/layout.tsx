@@ -21,6 +21,13 @@ const bodyFont = localFont({
   display: "swap",
 });
 
+const newsletterEnabled =
+  process.env.NEXT_PUBLIC_BLOG_DATA_MODE !== "mock" &&
+  Boolean(
+    process.env.NEXT_PUBLIC_HASHNODE_ENDPOINT &&
+      process.env.NEXT_PUBLIC_HASHNODE_PUBLICATION_ID
+  );
+
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -48,7 +55,7 @@ export default async function RootLayout({
           <div className="relative flex min-h-screen flex-col">
             <Navbar />
             <div className="flex-1">{children}</div>
-            <NewsletterCard />
+            <NewsletterCard newsletterEnabled={newsletterEnabled} />
             <Footer />
           </div>
         </Providers>

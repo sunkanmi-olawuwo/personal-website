@@ -76,11 +76,17 @@ export async function getBlogName() {
   };
 }
 
-export async function getPosts({ first = 9, pageParam = "" }: GetPostsArgs) {
+export async function getPosts({
+  first = 9,
+  pageParam = "",
+  tagSlug,
+}: GetPostsArgs) {
+  const postsFilterDeclaration = tagSlug ? ", $tagSlugs: [String!]" : "";
+  const postsFilterArgument = tagSlug ? ", filter: { tagSlugs: $tagSlugs }" : "";
   const query = gql`
-    query getPosts($publicationId: ObjectId!, $first: Int!, $after: String) {
+    query getPosts($publicationId: ObjectId!, $first: Int!, $after: String${postsFilterDeclaration}) {
       publication(id: $publicationId) {
-        posts(first: $first, after: $after) {
+        posts(first: $first, after: $after${postsFilterArgument}) {
           edges {
             node {
               id
@@ -97,6 +103,11 @@ export async function getPosts({ first = 9, pageParam = "" }: GetPostsArgs) {
                 name
                 profilePicture
               }
+              tags {
+                id
+                name
+                slug
+              }
             }
             cursor
           }
@@ -109,9 +120,10 @@ export async function getPosts({ first = 9, pageParam = "" }: GetPostsArgs) {
     publicationId,
     first,
     after: pageParam,
+    ...(tagSlug ? { tagSlugs: [tagSlug] } : {}),
   });
 
-  return response?.publication.posts.edges ?? getMockPostsPage({ first, pageParam });
+  return response?.publication.posts.edges ?? getMockPostsPage({ first, pageParam, tagSlug });
 }
 
 export async function subscribeToNewsletter(email: string) {
@@ -142,6 +154,7 @@ export async function getPostBySlug(slug: string) {
     query getPostBySlug($publicationId: ObjectId!, $slug: String!) {
       publication(id: $publicationId) {
         post(slug: $slug) {
+          id
           title
           subtitle
           coverImage {
@@ -153,6 +166,11 @@ export async function getPostBySlug(slug: string) {
           author {
             name
             profilePicture
+          }
+          tags {
+            id
+            name
+            slug
           }
         }
       }

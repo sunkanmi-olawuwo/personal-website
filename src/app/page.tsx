@@ -11,12 +11,24 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+function getTagSlug(tagParam: string | string[] | undefined) {
+  const rawTagSlug = Array.isArray(tagParam) ? tagParam[0] : tagParam;
+
+  return rawTagSlug?.trim() || undefined;
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ tag?: string | string[] | undefined }>;
+}) {
+  const { tag } = await searchParams;
+  const tagSlug = getTagSlug(tag);
   const queryClient = new QueryClient();
 
   await queryClient.prefetchInfiniteQuery({
-    queryKey: ["posts"],
-    queryFn: ({ pageParam }) => getPosts({ pageParam }),
+    queryKey: ["posts", tagSlug ?? "all"],
+    queryFn: ({ pageParam }) => getPosts({ pageParam, tagSlug }),
     getNextPageParam: (lastPage: PostEdge[]) =>
       lastPage.length < 9 ? undefined : lastPage[lastPage.length - 1].cursor,
     initialPageParam: "",
@@ -57,7 +69,7 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             <HydrationBoundary state={dehydrate(queryClient)}>
-              <Posts />
+              <Posts tagSlug={tagSlug} />
             </HydrationBoundary>
           </div>
         </div>

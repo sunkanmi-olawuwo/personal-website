@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import PostContent from "./post-content";
+import TagLink from "./tag-link";
 
 type Props = {
   slug: string;
@@ -39,9 +41,17 @@ export default function Post({ slug }: Props) {
           Back to home
         </Link>
         <div className="space-y-4">
-          <p className="font-display text-xs font-semibold uppercase tracking-[0.32em] text-primary/75">
-           
-          </p>
+          {data.tags.length ? (
+            <div className="flex flex-wrap gap-2">
+              {data.tags.map((tag) => (
+                <TagLink
+                  key={tag.slug}
+                  tag={tag}
+                  className="bg-[hsl(var(--surface)/0.88)]"
+                />
+              ))}
+            </div>
+          ) : null}
           <h1 className="font-display text-4xl font-extrabold leading-[1.02] tracking-[-0.04em] sm:text-5xl lg:text-6xl">
             {data.title}
           </h1>
@@ -86,10 +96,7 @@ export default function Post({ slug }: Props) {
           unoptimized={usesRemoteMockImage}
         />
       </div>
-      <div
-        className="section-shell page-reveal page-reveal-delay-2 blog-content flex flex-col gap-6 px-5 py-8 sm:px-8 lg:px-10"
-        dangerouslySetInnerHTML={{ __html: data.content.html }}
-      />
+      <PostContent html={data.content.html} />
     </article>
   );
 }
