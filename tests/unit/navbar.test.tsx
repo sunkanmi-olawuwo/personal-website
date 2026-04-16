@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 const getBlogNameMock = vi.hoisted(() => vi.fn());
@@ -26,7 +26,7 @@ async function renderNavbar(
 }
 
 describe("Navbar", () => {
-  it("renders the brand link, theme toggle, and GitHub link", async () => {
+  it("renders the brand link, primary nav links, theme toggle, and GitHub link", async () => {
     await renderNavbar({
       displayTitle: "Design System Journal",
       title: "Fallback Title",
@@ -35,6 +35,19 @@ describe("Navbar", () => {
     expect(
       screen.getByRole("link", { name: "Design System Journal" }),
     ).toHaveAttribute("href", "/");
+    expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+    expect(screen.getByRole("link", { name: "Travel" })).toHaveAttribute(
+      "href",
+      "/travel",
+    );
+    expect(
+      within(
+        screen.getByRole("navigation", { name: "Primary navigation" }),
+      ).getAllByRole("link").map((link) => link.textContent),
+    ).toEqual(["Blog", "Travel"]);
     expect(
       screen.getByRole("button", { name: /theme/i }),
     ).toBeInTheDocument();
