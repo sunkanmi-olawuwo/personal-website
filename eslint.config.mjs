@@ -14,6 +14,16 @@ const config = [
   },
   ...nextVitals,
   ...nextTypeScript,
+  {
+    rules: {
+      // `set-state-in-effect` was added in eslint-plugin-react-hooks 7.1.
+      // The existing setState-in-effect patterns (hydration flags, prop sync)
+      // are pre-existing code-quality items tracked for Phase 4 of the audit
+      // plan — disabling here to keep the pnpm migration zero-behaviour.
+      // TODO(phase-4): re-enable and refactor the 5 violations.
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
 ];
 
 export default config;

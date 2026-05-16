@@ -17,26 +17,29 @@ Before writing non-trivial framework code, read the relevant guide under `node_m
 
 ## Commands
 
-```bash
-npm run dev          # Local dev (uses NEXT_PUBLIC_BLOG_DATA_MODE from .env.local; defaults to 'auto')
-npm run build        # Production build
-npm run lint         # ESLint flat config
-npx tsc --noEmit     # Typecheck (CI runs this; no npm script alias)
+This project uses **pnpm** (pinned via `packageManager` in `package.json`).
+Enable Corepack once with `corepack enable` if you haven't already.
 
-npm run test         # Unit + e2e
-npm run test:unit    # Vitest only
-npm run test:e2e     # Builds in mock mode, then runs Playwright with @live tests excluded
-npm run test:e2e:live  # Live Hashnode e2e (requires real publication env vars)
+```bash
+pnpm dev               # Local dev (uses NEXT_PUBLIC_BLOG_DATA_MODE from .env.local; defaults to 'auto')
+pnpm build             # Production build
+pnpm lint              # ESLint flat config
+pnpm exec tsc --noEmit # Typecheck (CI runs this; no script alias)
+
+pnpm test              # Unit + e2e
+pnpm test:unit         # Vitest only
+pnpm test:e2e          # Builds in mock mode, then runs Playwright with @live tests excluded
+pnpm test:e2e:live     # Live Hashnode e2e (requires real publication env vars)
 
 # Run a single unit test
-npx vitest run tests/unit/posts.test.tsx
-npx vitest tests/unit/posts.test.tsx     # watch mode
+pnpm exec vitest run tests/unit/posts.test.tsx
+pnpm exec vitest tests/unit/posts.test.tsx     # watch mode
 
 # Run a single Playwright test (must build first if not already built)
-npx playwright test tests/e2e/offline-blog.spec.ts
+pnpm exec playwright test tests/e2e/offline-blog.spec.ts
 ```
 
-The Playwright config starts its own server on `http://127.0.0.1:3400` via `npm run start` — do not run `npm run dev` alongside it. `npm run test:e2e` rebuilds every invocation.
+The Playwright config starts its own server on `http://127.0.0.1:3400` via `pnpm start` — do not run `pnpm dev` alongside it. `pnpm test:e2e` rebuilds every invocation.
 
 ## Content Mode Architecture
 

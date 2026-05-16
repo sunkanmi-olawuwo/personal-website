@@ -8,10 +8,14 @@ This project is a Next.js blog that can run in three content modes:
 
 ## Setup
 
+This project uses [pnpm](https://pnpm.io). With Node 22+ and Corepack enabled
+(`corepack enable`), `pnpm` is provisioned automatically from the
+`packageManager` field in `package.json`.
+
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Copy `.env.example` to `.env.local` and choose a content mode:
@@ -27,7 +31,7 @@ NEXT_PUBLIC_HASHNODE_PUBLICATION_ID=
 Use mock content for UI and design work:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 If you want live Hashnode data instead, set:
@@ -44,7 +48,7 @@ If you leave `NEXT_PUBLIC_BLOG_DATA_MODE=auto`, the app will use live Hashnode d
 Run the full local test suite:
 
 ```bash
-npm test
+pnpm test
 ```
 
 The default Playwright run uses explicit mock mode so the blog pages stay stable and previewable without an external content dependency.
