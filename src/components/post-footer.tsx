@@ -69,7 +69,7 @@ export default function PostFooter({ slug, post }: Props) {
           <p className="font-display text-[0.66rem] font-semibold uppercase tracking-[0.32em] text-primary/75">
             Written by
           </p>
-          <h2 className="font-display text-2xl font-bold tracking-[-0.02em]">
+          <h2 className="text-balance font-display text-2xl font-bold tracking-[-0.04em]">
             {post.author.name}
           </h2>
           <p className="max-w-2xl text-sm leading-7 text-muted-foreground sm:text-[0.95rem]">

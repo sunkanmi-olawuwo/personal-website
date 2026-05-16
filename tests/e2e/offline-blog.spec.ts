@@ -59,9 +59,9 @@ test("home footer renders multi-column layout with socials, RSS, and inline subs
     "href",
     "/about",
   );
-  await expect(footer.getByRole("link", { name: "Now" })).toHaveAttribute(
+  await expect(footer.getByRole("link", { name: "Archive" })).toHaveAttribute(
     "href",
-    "/now",
+    "/archive",
   );
   await expect(footer.getByRole("link", { name: "RSS" })).toHaveAttribute(
     "href",

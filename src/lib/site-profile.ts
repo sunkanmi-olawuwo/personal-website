@@ -12,10 +12,18 @@ export type ProfileLink = {
 
 export type BrandLinkVariant = "underline" | "lift" | "shine";
 
+export type AvailabilityTone = "open" | "writing" | "heads-down";
+
+export type AvailabilityStatus = {
+  label: string;
+  tone?: AvailabilityTone;
+};
+
 export type SiteProfile = {
   name: string;
   brandLinkVariant: BrandLinkVariant;
   heroHeadline: string;
+  heroHighlight?: string;
   heroSummary: string;
   newsletterEyebrow?: string;
   newsletterSummary?: string;
@@ -23,12 +31,15 @@ export type SiteProfile = {
   primaryCta: ProfileCta;
   secondaryCta: ProfileCta;
   socialLinks?: ProfileLink[];
+  availabilityStatus?: AvailabilityStatus;
+  resumeHref?: string;
 };
 
 export const siteProfile = {
   name: "Sunkanmi Olawuwo",
   brandLinkVariant: "shine",
   heroHeadline: "Building reliable software systems for real-world products.",
+  heroHighlight: "reliable software systems",
   heroSummary:
     "I write about backend engineering, AI systems, cloud architecture, testing, and the practical decisions behind production software, explained in simple and practical terms.",
   newsletterEyebrow: "The weekly digest",
@@ -56,6 +67,12 @@ export const siteProfile = {
       external: true,
     },
   ],
+  availabilityStatus: {
+    label: "Available for consulting",
+    tone: "open",
+  },
+  // TODO(user): replace with a hosted résumé URL when ready.
+  resumeHref: "https://www.linkedin.com/in/sunkanmi-olawuwo/",
 } satisfies SiteProfile;
 
 export const siteUrl =

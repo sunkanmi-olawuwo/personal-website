@@ -26,9 +26,9 @@
     --surface-strong: 220.0 13.0% 91.0%;
     --hero-glow: 32 88% 64%;
     --hero-ring: 216.0 12.2% 83.9%;
-    --shadow-soft: 0 18px 45px -34px rgba(15, 23, 42, 0.22);
-    --shadow-medium: 0 28px 70px -42px rgba(15, 23, 42, 0.28);
-    --shadow-strong: 0 38px 90px -48px rgba(15, 23, 42, 0.34);
+    --shadow-soft: 0 22px 52px -30px rgba(15, 23, 42, 0.32);
+    --shadow-medium: 0 32px 70px -36px rgba(15, 23, 42, 0.42);
+    --shadow-strong: 0 44px 96px -42px rgba(15, 23, 42, 0.52);
     --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
     --radius: 1.25rem;
   }
@@ -503,16 +503,16 @@ blockquote {
 }
 
 .blog-content h1 {
-  @apply text-4xl font-bold tracking-[-0.03em];
+  @apply text-balance text-4xl font-bold tracking-[-0.04em];
 }
 
 .blog-content h2 {
-  @apply text-3xl font-bold tracking-[-0.03em];
+  @apply text-balance text-3xl font-bold tracking-[-0.04em];
   scroll-margin-top: 6rem;
 }
 
 .blog-content h3 {
-  @apply text-2xl font-bold tracking-[-0.02em];
+  @apply text-balance text-2xl font-bold tracking-[-0.03em];
   scroll-margin-top: 6rem;
 }
 
@@ -536,7 +536,7 @@ blockquote {
 
 .blog-content p,
 .blog-content li {
-  @apply text-lg leading-9;
+  @apply text-pretty text-lg leading-8;
 }
 
 .blog-content figure {
