@@ -185,11 +185,8 @@ A premium personal site usually has:
 
 | Page | Purpose | Priority |
 |---|---|---|
-| `/about` | Bio, photo, principles, experience timeline | **High** |
-| `/work` (or `/projects`) | Selected work, case studies | **High** |
-| `/now` | What you're currently focused on | Medium |
-| `/uses` | Hardware/software stack | Low (but loved by devs) |
-| `/talks` | Conference talks, podcasts | Medium |
+| `/about` |  |  |
+| `/experience` |  | |
 | `/rss.xml` | Feed | **High** |
 | `/sitemap.xml` | SEO | **High** |
 

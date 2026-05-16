@@ -48,6 +48,10 @@ describe("Navbar", () => {
       "href",
       "/",
     );
+    expect(screen.getByRole("link", { name: "About" })).toHaveAttribute(
+      "href",
+      "/about",
+    );
     expect(screen.getByRole("link", { name: "Travel" })).toHaveAttribute(
       "href",
       "/travel",
@@ -56,7 +60,7 @@ describe("Navbar", () => {
       within(
         screen.getByRole("navigation", { name: "Primary navigation" }),
       ).getAllByRole("link").map((link) => link.textContent),
-    ).toEqual(["Blog", "Travel"]);
+    ).toEqual(["Blog", "About", "Travel"]);
     expect(
       screen.getByRole("button", { name: /theme/i }),
     ).toBeInTheDocument();
@@ -106,6 +110,23 @@ describe("Navbar", () => {
     expect(travelLink).toHaveAttribute("aria-current", "page");
 
     expect(screen.getByRole("link", { name: "Blog" })).not.toHaveAttribute(
+      "data-active",
+    );
+  });
+
+  it("marks About as the active section on the about route", async () => {
+    usePathnameMock.mockReturnValue("/about");
+
+    await renderNavbar();
+
+    const aboutLink = screen.getByRole("link", { name: "About" });
+    expect(aboutLink).toHaveAttribute("data-active", "true");
+    expect(aboutLink).toHaveAttribute("aria-current", "page");
+
+    expect(screen.getByRole("link", { name: "Blog" })).not.toHaveAttribute(
+      "data-active",
+    );
+    expect(screen.getByRole("link", { name: "Travel" })).not.toHaveAttribute(
       "data-active",
     );
   });

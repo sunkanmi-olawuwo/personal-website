@@ -90,7 +90,7 @@ export default function BlogCard({ post, loading, variant = "default" }: Props) 
         ) : null}
         <h2
           className={cn(
-            "font-display font-bold leading-tight tracking-[-0.03em]",
+            "text-balance font-display font-bold leading-tight tracking-[-0.04em]",
             isFeatured ? "text-2xl sm:text-3xl lg:text-4xl" : "text-xl",
           )}
         >

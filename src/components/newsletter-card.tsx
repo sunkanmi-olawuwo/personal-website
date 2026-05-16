@@ -162,7 +162,7 @@ export default function NewsletterCard({ newsletterEnabled }: Props) {
             <p className="font-display text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-primary/78">
               {siteProfile.newsletterEyebrow ?? "Newsletter"}
             </p>
-            <h2 className="font-display text-xl font-extrabold tracking-[-0.03em] text-foreground">
+            <h2 className="text-balance font-display text-xl font-extrabold tracking-[-0.04em] text-foreground">
               New essays, no noise.
             </h2>
             <p className="text-sm leading-6 text-muted-foreground dark:text-foreground/72">

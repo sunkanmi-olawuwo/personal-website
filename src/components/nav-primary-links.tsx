@@ -18,6 +18,11 @@ const NAV_LINKS: NavPrimaryLink[] = [
     match: (pathname) => pathname === "/" || pathname?.startsWith("/blog") === true,
   },
   {
+    href: "/about",
+    label: "About",
+    match: (pathname) => pathname?.startsWith("/about") === true,
+  },
+  {
     href: "/travel",
     label: "Travel",
     match: (pathname) => pathname?.startsWith("/travel") === true,

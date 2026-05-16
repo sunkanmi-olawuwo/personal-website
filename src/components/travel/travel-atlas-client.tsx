@@ -193,7 +193,7 @@ function TravelHero({
       </p>
       <h1
         id="travel-hero-title"
-        className="font-display text-4xl font-bold tracking-[-0.035em] text-balance sm:text-5xl lg:text-6xl"
+        className="text-balance font-display text-4xl font-bold tracking-[-0.04em] sm:text-5xl lg:text-6xl"
       >
         Notes from the road.
       </h1>
@@ -315,7 +315,7 @@ function SelectedCountryPanel({ country }: { country: TravelCountry }) {
         </p>
         <h3
           id="selected-country-heading"
-          className="font-display text-3xl font-bold tracking-[-0.025em] text-foreground sm:text-4xl"
+          className="text-balance font-display text-3xl font-bold tracking-[-0.04em] text-foreground sm:text-4xl"
         >
           {country.name}
         </h3>
@@ -410,7 +410,7 @@ function MemoryGallery({
           </p>
           <h2
             id="travel-gallery-title"
-            className="font-display text-2xl font-bold tracking-[-0.025em] sm:text-3xl"
+            className="text-balance font-display text-2xl font-bold tracking-[-0.04em] sm:text-3xl"
           >
             {country.name} — {country.photos.length} memories
           </h2>
@@ -679,7 +679,7 @@ function VisitedCountriesGrid({
         </p>
         <h2
           id="visited-countries-title"
-          className="font-display text-2xl font-bold tracking-[-0.025em] sm:text-3xl"
+          className="text-balance font-display text-2xl font-bold tracking-[-0.04em] sm:text-3xl"
         >
           Visited countries
         </h2>

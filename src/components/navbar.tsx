@@ -38,7 +38,8 @@ export default async function Navbar() {
           <Button
             asChild
             variant="outline"
-            className="rounded-full border-border/80 bg-[hsl(var(--surface))] px-4 text-foreground hover:text-foreground"
+            aria-label="GitHub"
+            className="rounded-full border-border/80 bg-[hsl(var(--surface))] px-3 text-foreground hover:text-foreground sm:px-4"
           >
             <Link
               className="flex items-center gap-2"
@@ -46,7 +47,7 @@ export default async function Navbar() {
               target="_blank"
               rel="noreferrer"
             >
-              <GitHubLogoIcon /> GitHub
+              <GitHubLogoIcon /> <span className="hidden sm:inline">GitHub</span>
             </Link>
           </Button>
         </div>

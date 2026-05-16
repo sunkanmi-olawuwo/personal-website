@@ -46,16 +46,14 @@ test("post page renders the reading progress bar and author bio", async ({
   ).toBeVisible();
 });
 
-test("about page surfaces principles and contact", async ({ page }) => {
+test("about page surfaces identity and principles", async ({ page }) => {
   await page.goto("/about", { waitUntil: "domcontentloaded" });
 
-  await expect(
-    page.getByRole("heading", { level: 1, name: /Backend.*systems engineer/i }),
-  ).toBeVisible();
+  await expect(page.locator("#identity")).toBeVisible();
   await expect(page.getByText("Adoption beats elegance")).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Read the journal →" }),
-  ).toHaveAttribute("href", "/#latest-writing");
+    page.getByRole("link", { name: /Browse the full archive/i }),
+  ).toBeVisible();
 });
 
 test("now page lists current focus and last-updated stamp", async ({ page }) => {
