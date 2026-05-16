@@ -1,14 +1,23 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 const getBlogNameMock = vi.hoisted(() => vi.fn());
+const usePathnameMock = vi.hoisted(() => vi.fn().mockReturnValue("/"));
 
 vi.mock("@/lib/requests", () => ({
   getBlogName: getBlogNameMock,
 }));
 
+vi.mock("next/navigation", () => ({
+  usePathname: () => usePathnameMock(),
+}));
+
 import Navbar from "@/components/navbar";
 import Providers from "@/components/providers";
+
+afterEach(() => {
+  usePathnameMock.mockReturnValue("/");
+});
 
 async function renderNavbar(
   blogName: {
@@ -70,6 +79,34 @@ describe("Navbar", () => {
     expect(screen.getByRole("link", { name: "Base Title" })).toHaveAttribute(
       "href",
       "/",
+    );
+  });
+
+  it("marks Blog as the active section on the home route", async () => {
+    usePathnameMock.mockReturnValue("/");
+
+    await renderNavbar();
+
+    const blogLink = screen.getByRole("link", { name: "Blog" });
+    expect(blogLink).toHaveAttribute("data-active", "true");
+    expect(blogLink).toHaveAttribute("aria-current", "page");
+
+    expect(screen.getByRole("link", { name: "Travel" })).not.toHaveAttribute(
+      "data-active",
+    );
+  });
+
+  it("marks Travel as the active section on the travel route", async () => {
+    usePathnameMock.mockReturnValue("/travel");
+
+    await renderNavbar();
+
+    const travelLink = screen.getByRole("link", { name: "Travel" });
+    expect(travelLink).toHaveAttribute("data-active", "true");
+    expect(travelLink).toHaveAttribute("aria-current", "page");
+
+    expect(screen.getByRole("link", { name: "Blog" })).not.toHaveAttribute(
+      "data-active",
     );
   });
 });

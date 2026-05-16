@@ -29,39 +29,80 @@ type FeatureCollection = {
   features: CountryFeature[];
 };
 
-const darkGlobePalette = {
-  atmosphere: "#67e8f9",
-  globe: "#08243f",
-  emissive: "#020b16",
-  selectedCountry: "rgba(45, 212, 191, 0.86)",
-  visitedCountry: "rgba(96, 165, 250, 0.58)",
-  visitedHover: "rgba(125, 211, 252, 0.72)",
-  unvisitedCountry: "rgba(148, 163, 184, 0.14)",
-  unvisitedHover: "rgba(148, 163, 184, 0.32)",
-  strokeVisited: "rgba(226, 232, 240, 0.5)",
-  strokeUnvisited: "rgba(148, 163, 184, 0.12)",
-  side: "rgba(15, 23, 42, 0.2)",
-  selectedPoint: "#f8fafc",
-  ring: "rgba(125, 211, 252, 0.64)",
-  shininess: 18,
-} as const;
+type GlobePalette = {
+  atmosphere: string;
+  globe: string;
+  emissive: string;
+  visitedCountry: string;
+  visitedHover: string;
+  unvisitedCountry: string;
+  unvisitedHover: string;
+  strokeVisited: string;
+  strokeUnvisited: string;
+  side: string;
+  selectedPoint: string;
+  shininess: number;
+};
 
-const lightGlobePalette = {
-  atmosphere: "#2563eb",
-  globe: "#7fb7ea",
-  emissive: "#2563eb",
-  selectedCountry: "rgba(20, 184, 166, 0.92)",
-  visitedCountry: "rgba(37, 99, 235, 0.72)",
-  visitedHover: "rgba(29, 78, 216, 0.82)",
-  unvisitedCountry: "rgba(241, 245, 249, 0.78)",
-  unvisitedHover: "rgba(219, 234, 254, 0.92)",
-  strokeVisited: "rgba(15, 23, 42, 0.46)",
-  strokeUnvisited: "rgba(37, 99, 235, 0.28)",
-  side: "rgba(37, 99, 235, 0.18)",
-  selectedPoint: "#0f172a",
-  ring: "rgba(14, 116, 144, 0.58)",
-  shininess: 14,
-} as const;
+function readToken(name: string) {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+}
+
+function hslToken(name: string, alpha?: number) {
+  const value = readToken(name);
+
+  if (!value) {
+    return alpha === undefined ? "#000000" : "rgba(0,0,0,0)";
+  }
+
+  // Three.js Color and some color parsers expect the legacy comma-separated
+  // syntax — `hsl(h, s%, l%)` — rather than the space-separated modern form.
+  const commaSeparated = value.split(/\s+/).filter(Boolean).join(", ");
+
+  return alpha === undefined
+    ? `hsl(${commaSeparated})`
+    : `hsla(${commaSeparated}, ${alpha})`;
+}
+
+function buildPalette(isDark: boolean): GlobePalette {
+  if (isDark) {
+    return {
+      atmosphere: hslToken("--primary"),
+      globe: hslToken("--background"),
+      emissive: hslToken("--background"),
+      visitedCountry: hslToken("--primary", 0.78),
+      visitedHover: hslToken("--accent", 0.82),
+      unvisitedCountry: hslToken("--foreground", 0.14),
+      unvisitedHover: hslToken("--foreground", 0.28),
+      strokeVisited: hslToken("--foreground", 0.78),
+      strokeUnvisited: hslToken("--foreground", 0.38),
+      side: hslToken("--background", 0.55),
+      selectedPoint: hslToken("--foreground"),
+      shininess: 18,
+    };
+  }
+
+  return {
+    atmosphere: hslToken("--primary"),
+    globe: hslToken("--surface-strong"),
+    emissive: hslToken("--primary"),
+    visitedCountry: hslToken("--primary", 0.72),
+    visitedHover: hslToken("--accent", 0.82),
+    unvisitedCountry: hslToken("--surface", 0.85),
+    unvisitedHover: hslToken("--muted", 0.7),
+    strokeVisited: hslToken("--foreground", 0.45),
+    strokeUnvisited: hslToken("--primary", 0.22),
+    side: hslToken("--primary", 0.18),
+    selectedPoint: hslToken("--foreground"),
+    shininess: 14,
+  };
+}
 
 function getFeatureIso(featureData: CountryFeature) {
   return String(featureData.id).padStart(3, "0");
@@ -81,6 +122,44 @@ function buildCountryFeatures() {
   return geoJson.features;
 }
 
+const FALLBACK_DARK_PALETTE: GlobePalette = {
+  atmosphere: "#5b9dff",
+  globe: "#0b1426",
+  emissive: "#020617",
+  visitedCountry: "rgba(96, 165, 250, 0.78)",
+  visitedHover: "rgba(251, 191, 36, 0.82)",
+  unvisitedCountry: "rgba(226, 232, 240, 0.14)",
+  unvisitedHover: "rgba(226, 232, 240, 0.28)",
+  strokeVisited: "rgba(226, 232, 240, 0.78)",
+  strokeUnvisited: "rgba(226, 232, 240, 0.38)",
+  side: "rgba(11, 20, 38, 0.55)",
+  selectedPoint: "#f8fafc",
+  shininess: 18,
+};
+
+const FALLBACK_LIGHT_PALETTE: GlobePalette = {
+  atmosphere: "#2563eb",
+  globe: "#dbeafe",
+  emissive: "#2563eb",
+  visitedCountry: "rgba(37, 99, 235, 0.72)",
+  visitedHover: "rgba(245, 158, 11, 0.82)",
+  unvisitedCountry: "rgba(248, 250, 252, 0.85)",
+  unvisitedHover: "rgba(219, 234, 254, 0.92)",
+  strokeVisited: "rgba(15, 23, 42, 0.45)",
+  strokeUnvisited: "rgba(37, 99, 235, 0.22)",
+  side: "rgba(37, 99, 235, 0.18)",
+  selectedPoint: "#0f172a",
+  shininess: 14,
+};
+
+function safeBuildPalette(isDark: boolean) {
+  if (typeof window === "undefined") {
+    return isDark ? FALLBACK_DARK_PALETTE : FALLBACK_LIGHT_PALETTE;
+  }
+
+  return buildPalette(isDark);
+}
+
 export default function TravelGlobe({
   countries,
   selectedCountry,
@@ -94,7 +173,20 @@ export default function TravelGlobe({
     height: 360,
   });
   const [isDarkTheme, setIsDarkTheme] = useState(false);
-  const palette = isDarkTheme ? darkGlobePalette : lightGlobePalette;
+  const [paletteVersion, setPaletteVersion] = useState(0);
+  const palette = useMemo(
+    () => safeBuildPalette(isDarkTheme),
+    // paletteVersion forces a re-build when CSS custom properties change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isDarkTheme, paletteVersion],
+  );
+
+  // The selected country's themeColor is the source of truth for accents on
+  // the globe — it matches the `--country-accent` CSS variable set on the
+  // travel page wrapper, without paying the cost of reading inherited
+  // custom properties from a different element.
+  const countryAccent = selectedCountry.themeColor;
+  const ringColor = selectedCountry.themeColor;
 
   const countryFeatures = useMemo(() => buildCountryFeatures(), []);
   const visitedByIso = useMemo(
@@ -104,8 +196,8 @@ export default function TravelGlobe({
   const globeMaterial = useMemo(
     () =>
       new MeshPhongMaterial({
-        color: new Color(palette.globe),
-        emissive: new Color(palette.emissive),
+        color: new Color(palette.globe || "#dbeafe"),
+        emissive: new Color(palette.emissive || "#2563eb"),
         shininess: palette.shininess,
       }),
     [palette],
@@ -140,12 +232,13 @@ export default function TravelGlobe({
     const root = document.documentElement;
     const syncTheme = () => {
       setIsDarkTheme(root.classList.contains("dark"));
+      setPaletteVersion((value) => value + 1);
     };
     const observer = new MutationObserver(syncTheme);
 
     syncTheme();
     observer.observe(root, {
-      attributeFilter: ["class"],
+      attributeFilter: ["class", "style"],
       attributes: true,
     });
 
@@ -180,7 +273,7 @@ export default function TravelGlobe({
     const featureIso = getFeatureIso(featureData);
 
     if (country?.slug === selectedCountry.slug) {
-      return palette.selectedCountry;
+      return countryAccent;
     }
 
     if (featureIso === hoveredIso && country) {
@@ -202,13 +295,10 @@ export default function TravelGlobe({
     <div
       ref={containerRef}
       data-travel-globe
-      className="relative min-h-[19rem] overflow-hidden sm:min-h-[22rem] md:min-h-[30rem] lg:min-h-[32rem]"
-      aria-label="Interactive globe of visited countries"
+      role="img"
+      aria-label={`Interactive globe focused on ${selectedCountry.name}`}
+      className="relative min-h-[19rem] overflow-hidden sm:min-h-[22rem] md:min-h-[28rem] lg:min-h-[30rem]"
     >
-      <div
-        aria-hidden
-        className="absolute inset-x-10 bottom-7 h-20 rounded-full bg-primary/12 blur-2xl dark:bg-cyan-300/10"
-      />
       <Globe
         ref={globeRef}
         width={size.width}
@@ -292,7 +382,7 @@ export default function TravelGlobe({
         ringLat="focusLat"
         ringLng="focusLng"
         ringAltitude={0.07}
-        ringColor={() => palette.ring}
+        ringColor={() => ringColor}
         ringMaxRadius={4.5}
         ringPropagationSpeed={1.1}
         ringRepeatPeriod={1800}

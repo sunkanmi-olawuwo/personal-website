@@ -22,6 +22,86 @@ test("header navigation reaches the travel atlas", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("travel hero renders a visible H1 and stats line", async ({ page }) => {
+  await page.goto("/travel", { waitUntil: "domcontentloaded" });
+  await waitForTravelAtlas(page);
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: /Notes from the road/i }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Travel statistics")).toBeVisible();
+});
+
+test("travel navbar reflects active section", async ({ page }) => {
+  await page.goto("/travel", { waitUntil: "domcontentloaded" });
+  await waitForTravelAtlas(page);
+
+  const travelLink = page
+    .getByRole("banner")
+    .getByRole("link", { name: "Travel" });
+  await expect(travelLink).toHaveAttribute("data-active", "true");
+  await expect(travelLink).toHaveAttribute("aria-current", "page");
+});
+
+test("visited countries are grouped by continent", async ({ page }) => {
+  await page.goto("/travel", { waitUntil: "domcontentloaded" });
+  await waitForTravelAtlas(page);
+
+  const visitedSection = page.locator(
+    'section[aria-labelledby="visited-countries-title"]',
+  );
+  await expect(
+    visitedSection.getByText("Africa", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    visitedSection.getByText("Europe", { exact: true }),
+  ).toBeVisible();
+});
+
+test("per-country accent is applied as a CSS custom property", async ({
+  page,
+}) => {
+  await page.goto("/travel?country=united-kingdom", {
+    waitUntil: "domcontentloaded",
+  });
+  await waitForTravelAtlas(page);
+
+  const accent = await page.evaluate(() => {
+    const main = document.querySelector(
+      "main[data-travel-atlas-hydrated]",
+    ) as HTMLElement | null;
+
+    return main?.style.getPropertyValue("--country-accent") ?? "";
+  });
+
+  expect(accent).toBe("#3b82f6");
+});
+
+test("lightbox surfaces the memory quote and a thumbnail strip", async ({
+  page,
+}) => {
+  await page.goto("/travel?country=nigeria", { waitUntil: "domcontentloaded" });
+  await waitForTravelAtlas(page);
+
+  await page.getByRole("button", { name: "Open Lagos lagoon light" }).click();
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("Other memories")).toBeVisible();
+
+  const active = dialog
+    .getByRole("button", { name: /Show Lagos lagoon light/ });
+  await expect(active).toHaveAttribute("aria-current", "true");
+
+  await dialog
+    .getByRole("button", { name: /Show Abuja evening calm/ })
+    .click();
+
+  await expect(
+    dialog.getByRole("heading", { name: "Abuja evening calm" }),
+  ).toBeVisible();
+});
+
 test("travel deep links preselect the requested country", async ({ page }) => {
   await page.goto("/travel?country=united-kingdom", {
     waitUntil: "domcontentloaded",

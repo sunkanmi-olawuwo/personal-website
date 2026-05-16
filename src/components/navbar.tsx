@@ -5,6 +5,7 @@ import { getBlogName } from "@/lib/requests";
 import { siteProfile, type BrandLinkVariant } from "@/lib/site-profile";
 import { cn } from "@/lib/utils";
 
+import NavPrimaryLinks from "./nav-primary-links";
 import ThemeToggler from "./theme-toggler";
 import { Button } from "./ui/button";
 
@@ -29,23 +30,7 @@ export default async function Navbar() {
               {title.displayTitle || title.title}
             </Link>
           </div>
-          <nav
-            aria-label="Primary navigation"
-            className="flex shrink-0 items-center gap-2"
-          >
-            <Link
-              href="/"
-              className="rounded-full border border-border/70 bg-[hsl(var(--surface))]/70 px-3 py-2 font-display text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground shadow-[var(--shadow-soft)] transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4"
-            >
-              Blog
-            </Link>
-            <Link
-              href="/travel"
-              className="rounded-full border border-border/70 bg-[hsl(var(--surface))]/70 px-3 py-2 font-display text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground shadow-[var(--shadow-soft)] transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4"
-            >
-              Travel
-            </Link>
-          </nav>
+          <NavPrimaryLinks />
         </div>
         <div className="flex items-center gap-3 sm:gap-4">
           <ThemeToggler />

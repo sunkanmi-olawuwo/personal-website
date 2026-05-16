@@ -702,6 +702,162 @@ div[data-node-type="callout"] {
   background: hsl(var(--primary) / 0.12);
 }
 
+/* Travel atlas — country accent fallback. The travel page sets
+   --country-accent inline per-selected-country; this default keeps elements
+   readable when no country override is active. */
+:root,
+.dark {
+  --country-accent: hsl(var(--accent));
+}
+
+/* Pull-quote — editorial blockquote with gradient left rule.
+   Reused by the travel memory and (in future) by blog post pull-quotes. */
+.editorial-pullquote {
+  position: relative;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  font-family: var(--font-display), sans-serif;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.6;
+  color: hsl(var(--foreground));
+}
+
+.editorial-pullquote::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    180deg,
+    var(--country-accent, hsl(var(--accent))) 0%,
+    hsl(var(--primary)) 100%
+  );
+}
+
+/* Inline text-arrow link used in the travel spotlight. */
+.inline-arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-display), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--foreground));
+  transition:
+    color 200ms var(--motion-ease),
+    gap 200ms var(--motion-ease);
+}
+
+.inline-arrow-link::after {
+  content: "↓";
+  transition: transform 240ms var(--motion-ease);
+}
+
+.inline-arrow-link:hover,
+.inline-arrow-link:focus-visible {
+  color: var(--country-accent, hsl(var(--accent)));
+  gap: 0.55rem;
+  outline: none;
+}
+
+.inline-arrow-link:hover::after,
+.inline-arrow-link:focus-visible::after {
+  transform: translateY(3px);
+}
+
+/* Nav primary link — active-section indicator. */
+.nav-pill {
+  position: relative;
+}
+
+.nav-pill[data-active="true"] {
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--accent) / 0.55);
+  background: hsl(var(--accent) / 0.1);
+}
+
+.nav-pill[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto auto -0.55rem 50%;
+  height: 3px;
+  width: 1.25rem;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: linear-gradient(90deg, hsl(var(--accent)), hsl(var(--primary)));
+}
+
+/* Travel page surface — uses the section-shell material but allows children
+   to layout in a 2-column composition. */
+.travel-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2rem;
+  border: 1px solid hsl(var(--hero-ring));
+  background: linear-gradient(
+    180deg,
+    hsl(var(--surface) / 0.97) 0%,
+    hsl(var(--surface) / 0.92) 100%
+  );
+  box-shadow: var(--shadow-soft);
+}
+
+.travel-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--country-accent, hsl(var(--accent))) 50%,
+    transparent 100%
+  );
+}
+
+.travel-shell::after {
+  content: "";
+  position: absolute;
+  inset: -8rem -10rem auto auto;
+  height: 22rem;
+  width: 22rem;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    var(--country-accent, hsl(var(--accent))) 0%,
+    transparent 70%
+  );
+  opacity: 0.12;
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+/* Globe wrapper — focusable for keyboard country cycling. */
+.travel-globe-frame {
+  position: relative;
+  isolation: isolate;
+  border-radius: 1.5rem;
+  outline: none;
+}
+
+.travel-globe-frame:focus-visible {
+  box-shadow: 0 0 0 2px hsl(var(--ring));
+}
+
+/* Gallery tile — borrows the selected country's accent on hover/focus. */
+.gallery-tile:hover,
+.gallery-tile:focus-visible {
+  border-color: color-mix(
+    in srgb,
+    var(--country-accent, hsl(var(--accent))) 45%,
+    transparent
+  );
+}
+
 /* View Transitions — shared element morph between card cover and post hero.
    The actual view-transition-name is set inline per-slug in components. */
 ::view-transition-group(root) {
