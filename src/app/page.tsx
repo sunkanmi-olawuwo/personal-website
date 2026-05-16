@@ -39,23 +39,23 @@ export default async function Home({
       <HomeHero />
       <section
         id="latest-writing"
-        className="section-shell page-reveal page-reveal-delay-2 px-5 pb-6 pt-8 sm:px-8 sm:pb-8 sm:pt-10 lg:px-10 lg:pb-9"
+        className="section-open page-reveal page-reveal-delay-2 pt-12 sm:pt-14 lg:pt-16"
         aria-labelledby="latest-writing-title"
       >
-        <div className="relative flex flex-col gap-7 sm:gap-8">
-          <div className="flex flex-col gap-3">
-            <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-primary/75">
+        <div className="relative flex flex-col gap-8 sm:gap-10">
+          <div className="flex flex-col gap-4">
+            <p className="font-display text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-primary/75">
               Journal
             </p>
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-              <div className="space-y-2">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div className="space-y-3">
                 <h2
                   id="latest-writing-title"
-                  className="font-display text-3xl font-bold tracking-[-0.04em] sm:text-4xl"
+                  className="text-balance font-display text-3xl font-bold tracking-[-0.04em] sm:text-4xl lg:text-5xl"
                 >
                   Articles
                 </h2>
-                <p className="max-w-2xl text-base leading-8 text-muted-foreground">
+                <p className="max-w-2xl text-pretty text-base leading-8 text-muted-foreground">
                   Thoughtful articles on software systems, AI applications, cloud
                   architecture, testing, and the practical decisions required to
                   build reliable software.

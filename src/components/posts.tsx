@@ -119,13 +119,17 @@ export default function Posts({ tagSlug }: Props) {
         </div>
       ) : null}
 
-      {postEdges.map((post, index) => (
-        <BlogCard
-          key={post.cursor}
-          post={post.node}
-          loading={index < 3 ? "eager" : undefined}
-        />
-      ))}
+      {postEdges.map((post, index) => {
+        const isFeatured = !activeTag && index === 0;
+        return (
+          <BlogCard
+            key={post.cursor}
+            post={post.node}
+            loading={index < 3 ? "eager" : undefined}
+            variant={isFeatured ? "featured" : "default"}
+          />
+        );
+      })}
       {hasPosts ? (
         <div className="col-span-1 mt-4 flex w-full justify-center sm:mt-5 lg:col-span-3">
           <Button

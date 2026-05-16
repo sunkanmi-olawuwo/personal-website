@@ -4,6 +4,22 @@ const MOCK_AUTHOR = {
   name: "Sunkanmi Olawuwo",
   profilePicture:
     "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&h=256&q=80",
+  bio: "Backend & AI systems engineer writing about building reliable software, cloud architecture, and the practical tradeoffs behind production systems.",
+};
+
+const MOCK_PUBLISHED_AT: Record<string, string> = {
+  "mock-01": "2026-05-12T09:00:00Z",
+  "mock-02": "2026-05-04T09:00:00Z",
+  "mock-03": "2026-04-22T09:00:00Z",
+  "mock-04": "2026-04-09T09:00:00Z",
+  "mock-05": "2026-03-28T09:00:00Z",
+  "mock-06": "2026-03-15T09:00:00Z",
+  "mock-07": "2026-03-02T09:00:00Z",
+  "mock-08": "2026-02-18T09:00:00Z",
+  "mock-09": "2026-02-04T09:00:00Z",
+  "mock-10": "2026-01-21T09:00:00Z",
+  "mock-11": "2026-01-08T09:00:00Z",
+  "mock-12": "2025-12-15T09:00:00Z",
 };
 
 type MockPostRecord = {
@@ -470,15 +486,53 @@ const mockPostRecords: MockPostRecord[] = [
   },
 ];
 
+function enrichNode(cursor: string, node: PostEdge["node"]): PostEdge["node"] {
+  const publishedAt = MOCK_PUBLISHED_AT[cursor];
+  const readingMinutes = Math.max(
+    3,
+    Math.round((node.content.text?.split(/\s+/).filter(Boolean).length ?? 0) / 220) + 3,
+  );
+
+  return {
+    ...node,
+    ...(publishedAt ? { publishedAt } : {}),
+    readingMinutes,
+  };
+}
+
+function enrichDetails(
+  cursor: string,
+  details: PostDetails,
+  slug: string,
+): PostDetails {
+  const publishedAt = MOCK_PUBLISHED_AT[cursor];
+  const wordCount = details.content.html
+    .replace(/<[^>]+>/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+  const readingMinutes = Math.max(3, Math.round(wordCount / 220) + 3);
+
+  return {
+    ...details,
+    slug,
+    ...(publishedAt ? { publishedAt } : {}),
+    readingMinutes,
+  };
+}
+
 export const mockPostEdges: PostEdge[] = mockPostRecords.map(
   ({ cursor, node }) => ({
     cursor,
-    node,
+    node: enrichNode(cursor, node),
   }),
 );
 
 const mockPostDetailsBySlug = Object.fromEntries(
-  mockPostRecords.map(({ details, node }) => [node.slug, details]),
+  mockPostRecords.map(({ cursor, details, node }) => [
+    node.slug,
+    enrichDetails(cursor, details, node.slug),
+  ]),
 ) as Record<string, PostDetails>;
 
 export const mockPostSlugs = mockPostEdges.map((post) => post.node.slug);

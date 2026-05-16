@@ -15,8 +15,8 @@
     --secondary-foreground: 210 16.7% 97.6%;
     --muted: 220.0 13.0% 91.0%;
     --muted-foreground: 215.0 13.8% 34.1%;
-    --accent: 223.8 46.6% 51.6%;
-    --accent-foreground: 210 16.7% 97.6%;
+    --accent: 32 88% 54%;
+    --accent-foreground: 24 35% 12%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 16.7% 97.6%;
     --border: 216.0 12.2% 83.9%;
@@ -24,7 +24,7 @@
     --ring: 219.2 51.6% 37.3%;
     --surface: 0 0% 100%;
     --surface-strong: 220.0 13.0% 91.0%;
-    --hero-glow: 223.8 46.6% 51.6%;
+    --hero-glow: 32 88% 64%;
     --hero-ring: 216.0 12.2% 83.9%;
     --shadow-soft: 0 18px 45px -34px rgba(15, 23, 42, 0.22);
     --shadow-medium: 0 28px 70px -42px rgba(15, 23, 42, 0.28);
@@ -46,8 +46,8 @@
     --secondary-foreground: 220.0 13.0% 91.0%;
     --muted: 221.7 20.7% 21.8%;
     --muted-foreground: 220.0 14.1% 67.1%;
-    --accent: 217.2 91.2% 59.8%;
-    --accent-foreground: 220.0 13.0% 91.0%;
+    --accent: 36 92% 60%;
+    --accent-foreground: 24 35% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 220.0 13.0% 91.0%;
     --border: 221.9 19.6% 25.0%;
@@ -55,7 +55,7 @@
     --ring: 221.2 83.2% 53.3%;
     --surface: 221.8 49.3% 13.1%;
     --surface-strong: 221.7 20.7% 21.8%;
-    --hero-glow: 217.2 91.2% 59.8%;
+    --hero-glow: 36 92% 60%;
     --hero-ring: 221.7 20.7% 21.8%;
     --shadow-soft: 0 22px 54px -34px rgba(2, 8, 23, 0.52);
     --shadow-medium: 0 32px 80px -42px rgba(2, 8, 23, 0.62);
@@ -353,6 +353,87 @@
   pointer-events: none;
 }
 
+/* Open negative-space section — used by Articles to break the card-card-card rhythm */
+.section-open {
+  position: relative;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.section-open::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  height: 1px;
+  width: clamp(3rem, 14vw, 9rem);
+  background: linear-gradient(
+    90deg,
+    hsl(var(--primary) / 0.55),
+    hsl(var(--accent) / 0.55)
+  );
+}
+
+/* Subtle SVG noise grain — used on the hero to swap out the dual blob look */
+.surface-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.45;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
+}
+
+.dark .surface-noise {
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+
+/* Single signature gradient orb (replaces the dual blobs) */
+.hero-signature-glow {
+  position: absolute;
+  pointer-events: none;
+  inset: -20% -10% auto auto;
+  height: 32rem;
+  width: 32rem;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    hsl(var(--accent) / 0.28) 0%,
+    hsl(var(--primary) / 0.18) 38%,
+    transparent 70%
+  );
+  filter: blur(60px);
+}
+
+.dark .hero-signature-glow {
+  background: radial-gradient(
+    circle at 50% 50%,
+    hsl(var(--accent) / 0.34) 0%,
+    hsl(var(--primary) / 0.22) 38%,
+    transparent 70%
+  );
+}
+
+.hero-grid-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, hsl(var(--foreground) / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--foreground) / 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at 30% 40%, rgba(0, 0, 0, 0.55), transparent 65%);
+  -webkit-mask-image: radial-gradient(circle at 30% 40%, rgba(0, 0, 0, 0.55), transparent 65%);
+}
+
+.dark .hero-grid-overlay {
+  background-image:
+    linear-gradient(to right, hsl(var(--foreground) / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--foreground) / 0.07) 1px, transparent 1px);
+}
+
 .writing-mark-frame {
   position: relative;
   display: flex;
@@ -427,14 +508,17 @@ blockquote {
 
 .blog-content h2 {
   @apply text-3xl font-bold tracking-[-0.03em];
+  scroll-margin-top: 6rem;
 }
 
 .blog-content h3 {
   @apply text-2xl font-bold tracking-[-0.02em];
+  scroll-margin-top: 6rem;
 }
 
 .blog-content h4 {
   @apply text-xl font-bold;
+  scroll-margin-top: 6rem;
 }
 
 .blog-content a {
@@ -616,4 +700,24 @@ blockquote {
 div[data-node-type="callout"] {
   @apply flex gap-5 rounded-2xl p-4;
   background: hsl(var(--primary) / 0.12);
+}
+
+/* View Transitions — shared element morph between card cover and post hero.
+   The actual view-transition-name is set inline per-slug in components. */
+::view-transition-group(root) {
+  animation-duration: 320ms;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-timing-function: var(--motion-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }

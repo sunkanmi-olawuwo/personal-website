@@ -57,3 +57,6 @@ export const siteProfile = {
     },
   ],
 } satisfies SiteProfile;
+
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://sunkanmi.olawuwo.com";

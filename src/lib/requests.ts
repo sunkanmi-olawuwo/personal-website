@@ -93,6 +93,8 @@ export async function getPosts({
               title
               subtitle
               slug
+              publishedAt
+              readTimeInMinutes
               content {
                 text
               }
@@ -123,7 +125,21 @@ export async function getPosts({
     ...(tagSlug ? { tagSlugs: [tagSlug] } : {}),
   });
 
-  return response?.publication.posts.edges ?? getMockPostsPage({ first, pageParam, tagSlug });
+  if (response?.publication.posts.edges) {
+    return response.publication.posts.edges.map((edge) => ({
+      ...edge,
+      node: {
+        ...edge.node,
+        readingMinutes:
+          edge.node.readingMinutes ??
+          (typeof (edge.node as { readTimeInMinutes?: number }).readTimeInMinutes === "number"
+            ? (edge.node as { readTimeInMinutes?: number }).readTimeInMinutes
+            : undefined),
+      },
+    }));
+  }
+
+  return getMockPostsPage({ first, pageParam, tagSlug });
 }
 
 export async function subscribeToNewsletter(email: string) {
@@ -155,8 +171,11 @@ export async function getPostBySlug(slug: string) {
       publication(id: $publicationId) {
         post(slug: $slug) {
           id
+          slug
           title
           subtitle
+          publishedAt
+          readTimeInMinutes
           coverImage {
             url
           }
@@ -166,6 +185,9 @@ export async function getPostBySlug(slug: string) {
           author {
             name
             profilePicture
+            bio {
+              text
+            }
           }
           tags {
             id
@@ -186,7 +208,31 @@ export async function getPostBySlug(slug: string) {
     return getMockPostBySlug(slug);
   }
 
-  return response.publication.post;
+  const post = response.publication.post;
+
+  if (!post) {
+    return null;
+  }
+
+  const liveAuthor = post.author as {
+    name: string;
+    profilePicture?: string;
+    bio?: { text?: string };
+  };
+
+  return {
+    ...post,
+    readingMinutes:
+      post.readingMinutes ??
+      (typeof (post as { readTimeInMinutes?: number }).readTimeInMinutes === "number"
+        ? (post as { readTimeInMinutes?: number }).readTimeInMinutes
+        : undefined),
+    author: {
+      name: liveAuthor.name,
+      profilePicture: liveAuthor.profilePicture,
+      bio: liveAuthor.bio?.text,
+    },
+  };
 }
 
 export const mockPostCount = mockPostEdges.length;

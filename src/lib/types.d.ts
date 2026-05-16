@@ -17,6 +17,8 @@ export type PostMetadata = {
   title: string;
   subtitle?: string;
   slug: string;
+  publishedAt?: string;
+  readingMinutes?: number;
   content: {
     text: string;
   };
@@ -37,17 +39,22 @@ export type PostEdge = {
 
 export type PostDetails = {
   id?: string;
+  slug?: string;
   title: string;
   subtitle?: string;
+  publishedAt?: string;
+  readingMinutes?: number;
   coverImage: {
     url: string;
   };
   content: {
     html: string;
+    text?: string;
   };
   author: {
     name: string;
     profilePicture?: string;
+    bio?: string;
   };
   tags: Tag[];
 };

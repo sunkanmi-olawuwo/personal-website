@@ -11,14 +11,9 @@ export default function HomeHero() {
       aria-labelledby="home-hero-title"
       className="section-shell interactive-surface page-reveal group px-5 py-6 backdrop-blur sm:px-8 sm:py-8 lg:px-12 lg:py-12"
     >
-      <div
-        aria-hidden
-        className="absolute -left-16 top-6 h-56 w-56 rounded-full bg-[hsl(var(--hero-glow))] opacity-55 blur-3xl transition-opacity duration-300 group-hover:opacity-80"
-      />
-      <div
-        aria-hidden
-        className="absolute right-0 top-0 h-72 w-72 rounded-full bg-primary/20 opacity-40 blur-3xl transition-transform duration-500 group-hover:scale-110 dark:opacity-50"
-      />
+      <div aria-hidden className="hero-grid-overlay" />
+      <div aria-hidden className="hero-signature-glow" />
+      <div aria-hidden className="surface-noise" />
       <div
         aria-hidden
         className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background/10 to-transparent"
