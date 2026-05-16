@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { slugifyHeading } from "@/lib/utils";
+
 type Props = {
   html: string;
 };
@@ -113,6 +115,20 @@ export default function PostContent({ html }: Props) {
 
     const cleanupFns: Array<() => void> = [];
     const timeoutIds: number[] = [];
+
+    const headingSlugs = new Map<string, number>();
+
+    for (const heading of contentRoot.querySelectorAll("h2")) {
+      if (heading.id) {
+        continue;
+      }
+
+      const text = (heading.textContent ?? "").trim();
+      const base = slugifyHeading(text || "section");
+      const occurrence = headingSlugs.get(base) ?? 0;
+      headingSlugs.set(base, occurrence + 1);
+      heading.id = occurrence === 0 ? base : `${base}-${occurrence}`;
+    }
 
     for (const preElement of contentRoot.querySelectorAll("pre")) {
       const codeElement = preElement.querySelector("code");

@@ -1,11 +1,17 @@
 "use client";
 
 import { getPostBySlug } from "@/lib/requests";
+import { formatPublishedDate, getReadingMinutes } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
 import PostContent from "./post-content";
+import PostFooter from "./post-footer";
+import PostSkeleton from "./post-skeleton";
+import PostToc from "./post-toc";
+import ReadingProgress from "./reading-progress";
 import TagLink from "./tag-link";
 
 type Props = {
@@ -19,84 +25,112 @@ export default function Post({ slug }: Props) {
   });
 
   if (isPending) {
-    return <div className="py-16 text-center text-muted-foreground">Loading post...</div>;
+    return <PostSkeleton />;
   }
 
   if (!data) return notFound();
 
   const usesRemoteMockImage = data.coverImage.url.includes("images.unsplash.com/");
   const localAuthorAvatar = "/blog-profile-photo.png";
-  const publishedAt =
+  const publishedAtISO =
     "publishedAt" in data && typeof data.publishedAt === "string"
       ? data.publishedAt
       : undefined;
+  const publishedDate = formatPublishedDate(publishedAtISO);
+  const readingMinutes = data.readingMinutes ?? getReadingMinutes(data.content);
+  const tagSummary = data.tags
+    .slice(0, 2)
+    .map((tag) => tag.name)
+    .join(", ");
 
   return (
-    <article className="mx-auto flex w-full max-w-4xl flex-col gap-8">
-      <div className="page-reveal flex flex-col gap-5">
-        <Link
-          href="/#latest-writing"
-          className="interactive-surface inline-flex w-fit items-center rounded-full border border-border/70 bg-[hsl(var(--surface)/0.8)] px-4 py-2 font-display text-xs font-semibold uppercase tracking-[0.28em] text-primary/80 shadow-[var(--shadow-soft)] transition-colors hover:text-primary"
-        >
-          Back to home
-        </Link>
-        <div className="space-y-4">
-          {data.tags.length ? (
-            <div className="flex flex-wrap gap-2">
-              {data.tags.map((tag) => (
-                <TagLink
-                  key={tag.slug}
-                  tag={tag}
-                  className="bg-[hsl(var(--surface)/0.88)]"
-                />
-              ))}
+    <>
+      <ReadingProgress />
+      <article className="mx-auto flex w-full max-w-6xl flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-10">
+        <div className="flex min-w-0 flex-col gap-8 lg:col-start-1">
+          <div className="page-reveal flex flex-col gap-5">
+            <Link
+              href="/#latest-writing"
+              className="interactive-surface inline-flex w-fit items-center rounded-full border border-border/70 bg-[hsl(var(--surface)/0.8)] px-4 py-2 font-display text-xs font-semibold uppercase tracking-[0.28em] text-primary/80 shadow-[var(--shadow-soft)] transition-colors hover:text-primary"
+            >
+              ← Back to home
+            </Link>
+            <div className="space-y-4">
+              {data.tags.length ? (
+                <div className="flex flex-wrap gap-2">
+                  {data.tags.map((tag) => (
+                    <TagLink
+                      key={tag.slug}
+                      tag={tag}
+                      className="bg-[hsl(var(--surface)/0.88)]"
+                    />
+                  ))}
+                </div>
+              ) : null}
+              <h1 className="text-balance font-display text-4xl font-extrabold leading-[1.02] tracking-[-0.04em] sm:text-5xl lg:text-6xl">
+                {data.title}
+              </h1>
+              {data.subtitle ? (
+                <p className="max-w-3xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">
+                  {data.subtitle}
+                </p>
+              ) : null}
             </div>
-          ) : null}
-          <h1 className="font-display text-4xl font-extrabold leading-[1.02] tracking-[-0.04em] sm:text-5xl lg:text-6xl">
-            {data.title}
-          </h1>
-          {data.subtitle ? (
-            <p className="max-w-3xl text-lg leading-8 text-muted-foreground sm:text-xl">
-              {data.subtitle}
-            </p>
-          ) : null}
-        </div>
-        <div className="flex flex-wrap items-center gap-4 text-base text-muted-foreground">
-          <Image
-            src={localAuthorAvatar}
-            alt={`${data.author.name} portrait`}
-            width={56}
-            height={56}
-            className="h-14 w-14 rounded-full object-cover ring-2 ring-border/90 shadow-[var(--shadow-soft)]"
-          />
-          <div className="flex flex-col">
-            <span className="font-semibold text-foreground">{data.author.name}</span>
-            <span className="text-sm">
-              {publishedAt
-                ? `Published on: ${new Date(publishedAt).toLocaleDateString()}`
-                : "Published on the journal"}
-            </span>
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              <Image
+                src={localAuthorAvatar}
+                alt={`${data.author.name} portrait`}
+                width={56}
+                height={56}
+                className="h-14 w-14 rounded-full object-cover ring-2 ring-border/90 shadow-[var(--shadow-soft)]"
+              />
+              <div className="flex flex-col">
+                <span className="font-semibold text-foreground">{data.author.name}</span>
+                <span className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em]">
+                  {publishedDate ? (
+                    <time dateTime={publishedAtISO}>{publishedDate}</time>
+                  ) : (
+                    <span>From the journal</span>
+                  )}
+                  <span aria-hidden>·</span>
+                  <span>{readingMinutes} min read</span>
+                  {tagSummary ? (
+                    <>
+                      <span aria-hidden>·</span>
+                      <span>{tagSummary}</span>
+                    </>
+                  ) : null}
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div className="interactive-surface interactive-media page-reveal page-reveal-delay-1 relative aspect-[16/9] w-full overflow-hidden rounded-[1.8rem] border border-border/70 bg-[hsl(var(--surface))] shadow-[var(--shadow-strong)]">
-        <div
-          aria-hidden
-          data-media-target
-          className="absolute inset-0 z-10 bg-gradient-to-tr from-primary/10 via-transparent to-white/5"
-        />
-        <Image
-          fill
-          preload
-          src={data.coverImage.url}
-          alt={data.title}
-          className="object-cover"
-          sizes="100vw"
-          unoptimized={usesRemoteMockImage}
-        />
-      </div>
-      <PostContent html={data.content.html} />
-    </article>
+          <div
+            className="interactive-surface interactive-media page-reveal page-reveal-delay-1 relative aspect-[16/9] w-full overflow-hidden rounded-[2rem] border border-border/70 bg-[hsl(var(--surface))] shadow-[var(--shadow-strong)]"
+            style={{ viewTransitionName: `post-cover-${slug}` } as React.CSSProperties}
+          >
+            <div
+              aria-hidden
+              data-media-target
+              className="absolute inset-0 z-10 bg-gradient-to-tr from-primary/10 via-transparent to-white/5"
+            />
+            <Image
+              fill
+              priority
+              src={data.coverImage.url}
+              alt={data.title}
+              className="object-cover"
+              sizes="(min-width: 1024px) 70vw, 100vw"
+              unoptimized={usesRemoteMockImage}
+            />
+          </div>
+          <PostContent html={data.content.html} />
+          <PostFooter slug={slug} post={data} />
+        </div>
+        <aside className="hidden min-w-0 lg:col-start-2 lg:block">
+          <PostToc html={data.content.html} />
+        </aside>
+      </article>
+    </>
   );
 }

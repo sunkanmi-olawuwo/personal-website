@@ -41,23 +41,40 @@ test("mock home page renders realistic content and paginates", async ({
   ).toBeDisabled();
 });
 
-test("home footer mirrors the digest layout with linkedin and github links", async ({
+test("home footer renders multi-column layout with socials, RSS, and inline subscribe", async ({
   page,
 }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await expect(page.getByText(siteProfile.newsletterEyebrow ?? "")).toBeVisible();
-  await expect(page.getByText(siteProfile.newsletterSummary ?? "")).toBeVisible();
-  await expect(page.getByPlaceholder("email@address.com")).toBeVisible();
-  await expect(
-    page.getByRole("contentinfo").getByRole("link", { name: "LinkedIn" }),
-  ).toHaveAttribute("href", siteProfile.socialLinks?.[0].href ?? "");
-  await expect(
-    page.getByRole("contentinfo").getByRole("link", { name: "GitHub" }),
-  ).toHaveAttribute("href", siteProfile.socialLinks?.[1].href ?? "");
-  await expect(
-    page.getByRole("contentinfo").getByRole("link", { name: "Writing" }),
-  ).toHaveCount(0);
+  const footer = page.getByRole("contentinfo");
+
+  await expect(footer.getByText("Stay in touch")).toBeVisible();
+  await expect(footer.getByText("Short list. Real essays. Never spam.")).toBeVisible();
+  await expect(footer.getByPlaceholder("email@address.com")).toBeVisible();
+  await expect(footer.getByRole("link", { name: "Latest essays" })).toHaveAttribute(
+    "href",
+    "/#latest-writing",
+  );
+  await expect(footer.getByRole("link", { name: "About" })).toHaveAttribute(
+    "href",
+    "/about",
+  );
+  await expect(footer.getByRole("link", { name: "Now" })).toHaveAttribute(
+    "href",
+    "/now",
+  );
+  await expect(footer.getByRole("link", { name: "RSS" })).toHaveAttribute(
+    "href",
+    "/rss.xml",
+  );
+  await expect(footer.getByRole("link", { name: "LinkedIn" })).toHaveAttribute(
+    "href",
+    siteProfile.socialLinks?.[0].href ?? "",
+  );
+  await expect(footer.getByRole("link", { name: "GitHub" })).toHaveAttribute(
+    "href",
+    siteProfile.socialLinks?.[1].href ?? "",
+  );
 });
 
 test("homepage reduces card motion when the user prefers reduced motion", async ({
