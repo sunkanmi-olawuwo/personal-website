@@ -41,7 +41,7 @@ This matters because the site loads `9` posts at a time and only shows `Load mor
 Start the app:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Useful routes to test:

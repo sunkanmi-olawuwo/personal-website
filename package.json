@@ -7,10 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "npm run test:unit && npm run test:e2e",
+    "test": "pnpm test:unit && pnpm test:e2e",
     "test:unit": "vitest run",
-    "test:e2e": "cross-env NEXT_PUBLIC_BLOG_DATA_MODE=mock npm run build && cross-env NEXT_PUBLIC_BLOG_DATA_MODE=mock playwright test --grep-invert @live",
-    "test:e2e:live": "cross-env NEXT_PUBLIC_BLOG_DATA_MODE=live npm run build && cross-env PLAYWRIGHT_LIVE=1 NEXT_PUBLIC_BLOG_DATA_MODE=live playwright test --grep @live"
+    "test:e2e": "cross-env NEXT_PUBLIC_BLOG_DATA_MODE=mock pnpm build && cross-env NEXT_PUBLIC_BLOG_DATA_MODE=mock playwright test --grep-invert @live",
+    "test:e2e:live": "cross-env NEXT_PUBLIC_BLOG_DATA_MODE=live pnpm build && cross-env PLAYWRIGHT_LIVE=1 NEXT_PUBLIC_BLOG_DATA_MODE=live playwright test --grep @live"
   },
   "dependencies": {
     "@fontsource-variable/epilogue": "^5.2.8",
@@ -62,5 +62,12 @@
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.2",
     "vitest": "^4.1.4"
+  },
+  "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }
