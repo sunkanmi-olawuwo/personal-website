@@ -152,7 +152,6 @@ test("representative mock blog posts render full article pages", async ({
 });
 
 test("theme navigation works from the navbar", async ({ page }) => {
-  await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   const themeButton = page.getByRole("button", {
@@ -160,9 +159,11 @@ test("theme navigation works from the navbar", async ({ page }) => {
   });
 
   await expect(themeButton).toBeEnabled({ timeout: 15000 });
-  await themeButton.click();
+  // Site defaults to dark; first click should reveal light.
   await expect(page.locator("html")).toHaveClass(/dark/);
-
   await themeButton.click();
   await expect(page.locator("html")).not.toHaveClass(/dark/);
+
+  await themeButton.click();
+  await expect(page.locator("html")).toHaveClass(/dark/);
 });
