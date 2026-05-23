@@ -57,19 +57,25 @@ describe("Footer", () => {
     );
 
     expect(
-      within(footer).getByRole("link", { name: "Latest essays" }),
+      within(footer).getByRole("link", { name: "Start here" }),
+    ).toHaveAttribute("href", "/start-here");
+    expect(
+      within(footer).getByRole("link", { name: "Latest essay" }),
     ).toHaveAttribute("href", "/#latest-writing");
     expect(within(footer).getByRole("link", { name: "About" })).toHaveAttribute(
       "href",
       "/about",
     );
+    expect(within(footer).getByRole("link", { name: "Now" })).toHaveAttribute(
+      "href",
+      "/now",
+    );
     expect(
       within(footer).getByRole("link", { name: "Archive" }),
     ).toHaveAttribute("href", "/archive");
-    expect(within(footer).getByRole("link", { name: "RSS" })).toHaveAttribute(
-      "href",
-      "/rss.xml",
-    );
+    expect(
+      within(footer).getByRole("link", { name: "RSS feed" }),
+    ).toHaveAttribute("href", "/rss.xml");
 
     const socialLinks = siteProfile.socialLinks ?? [];
     expect(

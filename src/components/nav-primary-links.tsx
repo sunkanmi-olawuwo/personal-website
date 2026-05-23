@@ -23,6 +23,11 @@ const NAV_LINKS: NavPrimaryLink[] = [
     match: (pathname) => pathname?.startsWith("/about") === true,
   },
   {
+    href: "/now",
+    label: "Now",
+    match: (pathname) => pathname?.startsWith("/now") === true,
+  },
+  {
     href: "/travel",
     label: "Travel",
     match: (pathname) => pathname?.startsWith("/travel") === true,
@@ -35,7 +40,7 @@ export default function NavPrimaryLinks() {
   return (
     <nav
       aria-label="Primary navigation"
-      className="flex shrink-0 items-center gap-2"
+      className="-mx-1 flex min-w-0 items-center gap-1.5 overflow-x-auto px-1 sm:gap-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {NAV_LINKS.map((link) => {
         const isActive = link.match(pathname);

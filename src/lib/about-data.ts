@@ -91,7 +91,7 @@ export const projects: Project[] = [
       "A small framework I use to compare prompts and retrieval strategies side-by-side, with reproducible runs and human-in-the-loop scoring.",
     stack: ["Python", "Postgres", "FastAPI"],
     year: "2025",
-    madeAt: "Confidential",
+    madeAt: "Healthtech platform",
   },
   {
     title: "Ingestion pipeline rewrite",
@@ -99,7 +99,7 @@ export const projects: Project[] = [
       "Replaced a brittle cron-driven ETL with an event-driven streaming pipeline; cut median freshness from 20 minutes to under 30 seconds.",
     stack: ["Go", "Kafka", "Postgres", "Terraform"],
     year: "2024",
-    madeAt: "Confidential",
+    madeAt: "Fintech — Series B",
   },
   {
     title: "RAG cost guardrails",
@@ -107,7 +107,7 @@ export const projects: Project[] = [
       "Per-tenant token budgets, eval-driven rollouts, and a small inference cache that brought blended LLM spend down 38% with no quality regression.",
     stack: ["TypeScript", "Redis", "OpenAI", "Anthropic"],
     year: "2024",
-    madeAt: "Confidential",
+    madeAt: "Healthtech platform",
   },
   {
     title: "Payments reconciliation service",
@@ -115,7 +115,7 @@ export const projects: Project[] = [
       "A boring-but-load-bearing reconciliation worker that survived 12× transaction growth without architectural changes — the cheapest reliability win of the year.",
     stack: ["TypeScript", "Postgres", "AWS"],
     year: "2023",
-    madeAt: "Confidential",
+    madeAt: "Fintech — Series B",
   },
   {
     title: "Internal RAG prototype",
@@ -123,7 +123,7 @@ export const projects: Project[] = [
       "The first production RAG application at a previous company; shipped retrieval, evaluation, and a small admin tool for human-scored regressions.",
     stack: ["Python", "Postgres", "FastAPI", "OpenAI"],
     year: "2023",
-    madeAt: "Confidential",
+    madeAt: "Healthtech platform",
   },
   {
     title: "Latency-budget audit tooling",
@@ -131,7 +131,7 @@ export const projects: Project[] = [
       "A small tracing helper that flagged the hottest endpoints exceeding their latency budget; led to the p95-from-480ms-to-95ms rewrite.",
     stack: ["TypeScript", "OpenTelemetry"],
     year: "2022",
-    madeAt: "Confidential",
+    madeAt: "Enterprise SaaS",
   },
 ];
 

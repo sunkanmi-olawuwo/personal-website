@@ -21,6 +21,7 @@ export type AvailabilityStatus = {
 
 export type SiteProfile = {
   name: string;
+  wordmark?: string;
   brandLinkVariant: BrandLinkVariant;
   heroHeadline: string;
   heroHighlight?: string;
@@ -28,6 +29,7 @@ export type SiteProfile = {
   newsletterEyebrow?: string;
   newsletterSummary?: string;
   portraitSrc: string;
+  aboutPortraitSrc?: string;
   primaryCta: ProfileCta;
   secondaryCta: ProfileCta;
   socialLinks?: ProfileLink[];
@@ -37,17 +39,19 @@ export type SiteProfile = {
 
 export const siteProfile = {
   name: "Sunkanmi Olawuwo",
+  wordmark: "S.O.",
   brandLinkVariant: "shine",
   heroHeadline: "Building reliable software systems for real-world products.",
   heroHighlight: "reliable software systems",
   heroSummary:
-    "I write about backend engineering, AI systems, cloud architecture, testing, and the practical decisions behind production software, explained in simple and practical terms.",
+    "Essays on backend, AI systems, and what production software actually costs to keep honest.",
   newsletterEyebrow: "The weekly digest",
   newsletterSummary:
     "Practical essays on backend engineering, AI application development, cloud architecture, testing, and the tradeoffs behind software that has to scale.",
-  portraitSrc: "/sunkanmi-olawuwo-headshot-cropped.png",
+  portraitSrc: "/sunkanmi-olawuwo-headshot-cropped.jpeg",
+  aboutPortraitSrc: "/about-pagprofile-photo.jpeg",
   primaryCta: {
-    label: "Articles",
+    label: "Read the journal",
     href: "#latest-writing",
   },
   secondaryCta: {

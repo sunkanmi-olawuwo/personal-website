@@ -23,7 +23,7 @@ export default function TagLink({
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center rounded-full border px-3 py-1 font-display text-[0.66rem] font-semibold uppercase tracking-[0.18em] transition-[border-color,background-color,color,transform,box-shadow] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "inline-flex min-h-[2.75rem] items-center rounded-full border px-3 py-2 font-display text-[0.66rem] font-semibold uppercase tracking-[0.18em] transition-[border-color,background-color,color,transform,box-shadow] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] sm:min-h-0 sm:py-1",
         active
           ? "border-primary/45 bg-primary/10 text-primary shadow-[var(--shadow-soft)]"
           : "border-border/70 bg-[hsl(var(--surface)/0.82)] text-muted-foreground hover:-translate-y-0.5 hover:border-primary/35 hover:text-foreground",

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 
 import { cn, slugifyHeading } from "@/lib/utils";
@@ -9,8 +10,11 @@ type Heading = {
   text: string;
 };
 
+type Variant = "desktop" | "mobile";
+
 type Props = {
   html: string;
+  variant?: Variant;
 };
 
 function extractHeadings(html: string): Heading[] {
@@ -33,7 +37,7 @@ function extractHeadings(html: string): Heading[] {
   });
 }
 
-export default function PostToc({ html }: Props) {
+export default function PostToc({ html, variant = "desktop" }: Props) {
   const [headings, setHeadings] = useState<Heading[]>(() => extractHeadings(html));
   const [activeId, setActiveId] = useState<string | undefined>(undefined);
 
@@ -82,6 +86,52 @@ export default function PostToc({ html }: Props) {
 
   if (headings.length < 2) {
     return null;
+  }
+
+  if (variant === "mobile") {
+    const activeHeading =
+      headings.find((heading) => heading.id === activeId) ?? headings[0];
+
+    return (
+      <details
+        data-post-toc-mobile
+        className="group rounded-2xl border border-border/70 bg-[hsl(var(--surface)/0.85)] px-4 py-3 lg:hidden"
+      >
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-left text-sm font-medium text-foreground [&::-webkit-details-marker]:hidden">
+          <span className="flex min-w-0 flex-col gap-1">
+            <span className="font-display text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-primary/75">
+              On this page
+            </span>
+            <span className="truncate text-foreground/90">
+              {activeHeading.text}
+            </span>
+          </span>
+          <ChevronDownIcon
+            aria-hidden
+            className="h-4 w-4 flex-none text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+          />
+        </summary>
+        <ol className="mt-4 flex flex-col gap-2 border-l border-border/70 pl-4 text-sm leading-6">
+          {headings.map((heading) => {
+            const isActive = heading.id === activeId;
+            return (
+              <li key={heading.id}>
+                <a
+                  href={`#${heading.id}`}
+                  className={cn(
+                    "block -ml-[1.05rem] border-l border-transparent py-1 pl-4 text-muted-foreground transition-colors hover:text-foreground",
+                    isActive && "border-primary text-foreground",
+                  )}
+                  data-active={isActive ? "true" : undefined}
+                >
+                  {heading.text}
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      </details>
+    );
   }
 
   return (

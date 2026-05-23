@@ -462,10 +462,9 @@ function EditorialGrid({
             isHero={isHero}
             onOpen={() => onOpenLightbox(index)}
             className={cn(
-              "h-64 sm:h-72",
               isHero
-                ? "lg:col-span-8 lg:row-span-2 lg:h-auto lg:min-h-[28rem]"
-                : "lg:col-span-4 lg:h-auto",
+                ? "h-72 -mx-5 rounded-none sm:mx-0 sm:rounded-2xl lg:col-span-8 lg:row-span-2 lg:-mx-0 lg:h-auto lg:min-h-[28rem]"
+                : "h-64 sm:h-72 lg:col-span-4 lg:h-auto",
             )}
           />
         );
@@ -768,43 +767,16 @@ function CountryFlagMark({
   country: TravelCountry;
   className?: string;
 }) {
-  if (country.slug === "nigeria") {
-    return (
-      <span
-        aria-hidden
-        className={cn(
-          "h-3.5 w-5 shrink-0 rounded-[2px] border border-white/40 bg-[linear-gradient(90deg,#16a34a_0_33%,#f8fafc_33%_66%,#16a34a_66%_100%)] shadow-sm",
-          className,
-        )}
-      />
-    );
-  }
-
-  if (country.slug === "united-kingdom") {
-    return (
-      <span
-        aria-hidden
-        className={cn(
-          "relative h-3.5 w-5 shrink-0 overflow-hidden rounded-[2px] border border-white/40 bg-[#1d4ed8] shadow-sm",
-          className,
-        )}
-      >
-        <span className="absolute inset-y-0 left-1/2 w-1.5 -translate-x-1/2 bg-white" />
-        <span className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 bg-white" />
-        <span className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-red-600" />
-        <span className="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 bg-red-600" />
-      </span>
-    );
-  }
-
   return (
     <span
-      aria-hidden
+      role="img"
+      aria-label={`${country.name} flag`}
       className={cn(
-        "h-3.5 w-5 shrink-0 rounded-[2px] border border-white/40 shadow-sm",
+        "inline-flex shrink-0 items-center justify-center text-base leading-none",
         className,
       )}
-      style={{ backgroundColor: country.themeColor }}
-    />
+    >
+      {country.flagEmoji}
+    </span>
   );
 }

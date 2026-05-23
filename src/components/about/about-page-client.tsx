@@ -27,15 +27,15 @@ type AnchorProps = {
 
 const PRINCIPLES = [
   {
-    title: "Boring infrastructure, interesting product",
+    title: "Boring infrastructure, interesting product.",
     body: "Most reliability wins come from understanding the system you have, not adopting the system you read about last week.",
   },
   {
-    title: "Tests are a design tool",
+    title: "Tests are a design tool.",
     body: "Edge cases, empty states, slow requests — these reveal more about the product than any roadmap doc.",
   },
   {
-    title: "Adoption beats elegance",
+    title: "Adoption beats elegance.",
     body: "Shipping a small, useful slice this sprint will outperform a perfect rewrite that lands next quarter.",
   },
 ];
@@ -93,7 +93,7 @@ export default function AboutPageClient() {
   return (
     <main
       data-about-page
-      className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 pb-16 pt-6 sm:px-6 lg:grid lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-12 lg:px-8 lg:pt-10"
+      className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 pb-16 pt-6 sm:px-6 lg:grid lg:grid-cols-[9rem_minmax(0,1fr)] lg:gap-10 lg:px-8 lg:pt-10"
     >
       <div className="lg:col-start-1">
         <AboutSectionRail sections={SECTIONS} />
@@ -106,17 +106,12 @@ export default function AboutPageClient() {
           className="section-open page-reveal flex flex-col gap-8 scroll-mt-32 pt-6 sm:pt-8"
           style={{ "--section-accent": "hsl(var(--primary))" } as SectionAccentStyle}
         >
-          <h1 id="identity-title" className="sr-only">
-            About {siteProfile.name}
-          </h1>
-          <p className="font-display text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-primary/80">
-            About
-          </p>
+          <p className="section-eyebrow text-primary/80">About</p>
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
-            <div className="relative h-32 w-32 flex-none overflow-hidden rounded-full border border-[hsl(var(--hero-ring))] shadow-[var(--shadow-strong)] ring-4 ring-[hsl(var(--primary)/0.12)] sm:h-40 sm:w-40">
+            <div className="relative h-32 w-32 flex-none overflow-hidden rounded-[1.75rem] border border-[hsl(var(--hero-ring))] shadow-[var(--shadow-strong)] ring-4 ring-[hsl(var(--primary)/0.12)] sm:h-40 sm:w-40">
               <Image
                 fill
-                src={siteProfile.portraitSrc}
+                src={siteProfile.aboutPortraitSrc ?? siteProfile.portraitSrc}
                 alt={`Portrait of ${siteProfile.name}`}
                 className="object-cover"
                 sizes="(min-width: 640px) 160px, 128px"
@@ -124,9 +119,12 @@ export default function AboutPageClient() {
               />
             </div>
             <div className="flex flex-col gap-3">
-              <p className="font-display text-2xl font-extrabold leading-tight tracking-[-0.03em] text-foreground sm:text-3xl">
+              <h1
+                id="identity-title"
+                className="text-balance font-display text-4xl font-extrabold leading-[1.02] tracking-[-0.04em] text-foreground sm:text-5xl lg:text-[3.25rem]"
+              >
                 {siteProfile.name}
-              </p>
+              </h1>
               <p className="max-w-xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
                 Backend &amp; AI systems engineer · London
               </p>
@@ -186,21 +184,29 @@ export default function AboutPageClient() {
           description="The shorthand I lean on when scoping work and choosing where to spend my judgment."
           accent="hsl(var(--accent))"
         >
-          <ul className="grid gap-5 sm:grid-cols-3">
-            {PRINCIPLES.map((principle) => (
+          <ol className="section-quiet flex flex-col">
+            {PRINCIPLES.map((principle, index) => (
               <li
                 key={principle.title}
-                className="rounded-[1.5rem] border border-border/70 bg-[hsl(var(--surface)/0.94)] p-6 shadow-[var(--shadow-soft)]"
+                className="grid grid-cols-[3.5rem_minmax(0,1fr)] items-baseline gap-x-2 gap-y-3 border-t border-border/60 py-7 first:border-t-0 sm:gap-x-4"
               >
-                <p className="font-display text-lg font-bold tracking-[-0.02em]">
-                  {principle.title}
-                </p>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  {principle.body}
-                </p>
+                <span
+                  aria-hidden
+                  className="font-display text-base font-semibold tabular-nums text-[var(--section-accent,hsl(var(--accent)))]"
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div className="flex flex-col gap-3">
+                  <p className="text-balance font-display text-2xl font-bold leading-[1.15] tracking-[-0.02em] text-foreground sm:text-3xl">
+                    {principle.title}
+                  </p>
+                  <p className="text-pretty text-base leading-8 text-muted-foreground sm:text-lg">
+                    {principle.body}
+                  </p>
+                </div>
               </li>
             ))}
-          </ul>
+          </ol>
         </AnchorSection>
 
         <AnchorSection

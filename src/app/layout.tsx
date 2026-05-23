@@ -5,7 +5,6 @@ import "./globals.css";
 
 import Navbar from "@/components/navbar";
 import Providers from "@/components/providers";
-import NewsletterCard from "@/components/newsletter-card";
 import Footer from "@/components/footer";
 import { getBlogName } from "@/lib/requests";
 
@@ -21,13 +20,6 @@ const bodyFont = localFont({
   display: "swap",
 });
 
-const newsletterEnabled =
-  process.env.NEXT_PUBLIC_BLOG_DATA_MODE !== "mock" &&
-  Boolean(
-    process.env.NEXT_PUBLIC_HASHNODE_ENDPOINT &&
-      process.env.NEXT_PUBLIC_HASHNODE_PUBLICATION_ID
-  );
-
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -36,7 +28,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: data.displayTitle || data.title,
     icons: {
-      icon: data.favicon || "/favicon.ico",
+      icon: [
+        { url: data.favicon || "/favicon.ico" },
+        { url: "/icon.svg", type: "image/svg+xml" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
     },
   };
 }
@@ -55,7 +51,6 @@ export default async function RootLayout({
           <div className="relative flex min-h-screen flex-col">
             <Navbar />
             <div className="flex-1">{children}</div>
-            <NewsletterCard newsletterEnabled={newsletterEnabled} />
             <Footer />
           </div>
         </Providers>
