@@ -83,22 +83,22 @@ test("lightbox surfaces the memory quote and a thumbnail strip", async ({
   await page.goto("/travel?country=nigeria", { waitUntil: "domcontentloaded" });
   await waitForTravelAtlas(page);
 
-  await page.getByRole("button", { name: "Open Lagos lagoon light" }).click();
+  await page.getByRole("button", { name: "Open Lagos Island" }).click();
 
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText("Other memories")).toBeVisible();
 
   const active = dialog
-    .getByRole("button", { name: /Show Lagos lagoon light/ });
+    .getByRole("button", { name: /Show Lagos Island/ });
   await expect(active).toHaveAttribute("aria-current", "true");
 
   await dialog
-    .getByRole("button", { name: /Show Abuja evening calm/ })
+    .getByRole("button", { name: /Show Church on the island/ })
     .click();
 
   await expect(
-    dialog.getByRole("heading", { name: "Abuja evening calm" }),
+    dialog.getByRole("heading", { name: "Church on the island" }),
   ).toBeVisible();
 });
 
@@ -133,11 +133,11 @@ test("travel gallery lightbox opens and closes", async ({ page }) => {
   await page.goto("/travel?country=nigeria", { waitUntil: "domcontentloaded" });
   await waitForTravelAtlas(page);
 
-  await page.getByRole("button", { name: "Open Lagos lagoon light" }).click();
+  await page.getByRole("button", { name: "Open Lagos Island" }).click();
 
   await expect(page.getByRole("dialog")).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Lagos lagoon light" }),
+    page.getByRole("heading", { name: "Lagos Island" }),
   ).toBeVisible();
 
   await page.getByRole("button", { name: "Close" }).click();

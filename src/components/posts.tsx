@@ -133,7 +133,7 @@ export default function Posts({ tagSlug }: Props) {
       {hasPosts ? (
         <div className="col-span-1 mt-4 flex w-full justify-center sm:mt-5 lg:col-span-3">
           <Button
-            className="w-full rounded-full border-border/80 bg-[hsl(var(--surface))] px-8 py-6 text-sm font-semibold tracking-[0.18em] sm:w-auto"
+            className="w-full rounded-full border-border/80 bg-[hsl(var(--surface))] px-8 py-6 text-sm font-semibold tracking-[0.18em] text-foreground disabled:bg-[hsl(var(--surface))] disabled:text-muted-foreground disabled:opacity-100 sm:w-auto"
             variant="outline"
             disabled={!hasNextPage || isFetchingNextPage}
             onClick={() => fetchNextPage()}
