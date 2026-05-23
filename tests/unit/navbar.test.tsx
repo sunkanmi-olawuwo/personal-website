@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const getBlogNameMock = vi.hoisted(() => vi.fn());
 const usePathnameMock = vi.hoisted(() => vi.fn().mockReturnValue("/"));
+const siteProfileMock = vi.hoisted(() => ({ wordmark: undefined as string | undefined }));
 
 vi.mock("@/lib/requests", () => ({
   getBlogName: getBlogNameMock,
@@ -12,11 +13,29 @@ vi.mock("next/navigation", () => ({
   usePathname: () => usePathnameMock(),
 }));
 
+vi.mock("@/lib/site-profile", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/site-profile")>(
+    "@/lib/site-profile",
+  );
+  return {
+    ...actual,
+    siteProfile: new Proxy(actual.siteProfile, {
+      get(target, prop) {
+        if (prop === "wordmark") {
+          return siteProfileMock.wordmark;
+        }
+        return Reflect.get(target, prop);
+      },
+    }),
+  };
+});
+
 import Navbar from "@/components/navbar";
 import Providers from "@/components/providers";
 
 afterEach(() => {
   usePathnameMock.mockReturnValue("/");
+  siteProfileMock.wordmark = undefined;
 });
 
 async function renderNavbar(
@@ -52,6 +71,10 @@ describe("Navbar", () => {
       "href",
       "/about",
     );
+    expect(screen.getByRole("link", { name: "Now" })).toHaveAttribute(
+      "href",
+      "/now",
+    );
     expect(screen.getByRole("link", { name: "Travel" })).toHaveAttribute(
       "href",
       "/travel",
@@ -60,7 +83,7 @@ describe("Navbar", () => {
       within(
         screen.getByRole("navigation", { name: "Primary navigation" }),
       ).getAllByRole("link").map((link) => link.textContent),
-    ).toEqual(["Blog", "About", "Travel"]);
+    ).toEqual(["Blog", "About", "Now", "Travel"]);
     expect(
       screen.getByRole("button", { name: /theme/i }),
     ).toBeInTheDocument();

@@ -1,5 +1,6 @@
 "use client";
 
+import { isNewsletterConfigured } from "@/lib/env";
 import { getPostBySlug } from "@/lib/requests";
 import { formatPublishedDate, getReadingMinutes } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -7,8 +8,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import NewsletterInline from "./newsletter-inline";
 import PostContent from "./post-content";
 import PostFooter from "./post-footer";
+import PostPrevNext from "./post-prev-next";
 import PostSkeleton from "./post-skeleton";
 import PostToc from "./post-toc";
 import ReadingProgress from "./reading-progress";
@@ -82,7 +85,7 @@ export default function Post({ slug }: Props) {
                 alt={`${data.author.name} portrait`}
                 width={56}
                 height={56}
-                className="h-14 w-14 rounded-full object-cover ring-2 ring-border/90 shadow-[var(--shadow-soft)]"
+                className="h-14 w-14 rounded-[0.95rem] object-cover ring-1 ring-border/70 shadow-[var(--shadow-soft)]"
               />
               <div className="flex flex-col">
                 <span className="font-semibold text-foreground">{data.author.name}</span>
@@ -109,11 +112,6 @@ export default function Post({ slug }: Props) {
             className="interactive-surface interactive-media page-reveal page-reveal-delay-1 relative aspect-[16/9] w-full overflow-hidden rounded-[2rem] border border-border/70 bg-[hsl(var(--surface))] shadow-[var(--shadow-strong)]"
             style={{ viewTransitionName: `post-cover-${slug}` } as React.CSSProperties}
           >
-            <div
-              aria-hidden
-              data-media-target
-              className="absolute inset-0 z-10 bg-gradient-to-tr from-primary/10 via-transparent to-white/5"
-            />
             <Image
               fill
               priority
@@ -124,11 +122,14 @@ export default function Post({ slug }: Props) {
               unoptimized={usesRemoteMockImage}
             />
           </div>
+          <PostToc html={data.content.html} variant="mobile" />
           <PostContent html={data.content.html} />
+          <NewsletterInline newsletterEnabled={isNewsletterConfigured} />
           <PostFooter slug={slug} post={data} />
+          <PostPrevNext currentSlug={slug} />
         </div>
         <aside className="hidden min-w-0 lg:col-start-2 lg:block">
-          <PostToc html={data.content.html} />
+          <PostToc html={data.content.html} variant="desktop" />
         </aside>
       </article>
     </>

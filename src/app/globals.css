@@ -374,6 +374,46 @@
   );
 }
 
+/* Third surface variant — no chrome at all, just a top-spanning hairline. */
+.section-quiet {
+  position: relative;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.section-quiet::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    hsl(var(--primary) / 0.45) 0%,
+    hsl(var(--accent) / 0.25) 50%,
+    transparent 100%
+  );
+}
+
+/* Shared eyebrow label utility — the small caps caption above section titles. */
+.section-eyebrow {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+}
+
+.section-eyebrow--micro {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+}
+
 /* Subtle SVG noise grain — used on the hero to swap out the dual blob look */
 .surface-noise {
   position: absolute;
@@ -867,6 +907,26 @@ div[data-node-type="callout"] {
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-timing-function: var(--motion-ease);
+}
+
+/* Theme toggle circular reveal — origin set by ThemeToggler before transition. */
+html[data-theme-transitioning="true"]::view-transition-old(root) {
+  animation: none;
+  z-index: 1;
+}
+
+html[data-theme-transitioning="true"]::view-transition-new(root) {
+  animation: theme-toggle-reveal 550ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  z-index: 2;
+}
+
+@keyframes theme-toggle-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-toggle-x, 50%) var(--vt-toggle-y, 50%));
+  }
+  to {
+    clip-path: circle(160% at var(--vt-toggle-x, 50%) var(--vt-toggle-y, 50%));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

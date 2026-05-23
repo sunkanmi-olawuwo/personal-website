@@ -4,25 +4,24 @@ import { siteProfile } from "@/lib/site-profile";
 import FooterTop from "./footer-top";
 
 const READ_LINKS = [
-  { label: "Latest essays", href: "/#latest-writing" },
-  { label: "Backend", href: "/?tag=backend#latest-writing" },
-  { label: "AI applications", href: "/?tag=ai-applications#latest-writing" },
-  { label: "Testing", href: "/?tag=testing#latest-writing" },
+  // TODO(user): swap this slug for an evergreen "start here" post.
+  { label: "Start here", href: "/start-here" },
+  { label: "Latest essay", href: "/#latest-writing" },
+  { label: "Archive", href: "/archive" },
+  { label: "RSS feed", href: "/rss.xml" },
 ];
 
 const ABOUT_LINKS = [
   { label: "About", href: "/about" },
-  { label: "Archive", href: "/archive" },
-  { label: "Articles", href: "/#latest-writing" },
+  { label: "Now", href: "/now" },
+  { label: "Travel", href: "/travel" },
 ];
 
-const ELSEWHERE_LINKS = [
-  { label: "RSS", href: "/rss.xml", external: false },
-];
+const ELSEWHERE_LINKS: { label: string; href: string; external?: boolean }[] = [];
 
 export default async function Footer() {
   const title = await getBlogName();
-  const wordmark = title.displayTitle || title.title;
+  const wordmark = siteProfile.wordmark || title.displayTitle || title.title;
   const social = siteProfile.socialLinks ?? [];
 
   return (

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { mockPostEdges, mockPublication } from "../../src/lib/mock-blog-data";
+import { mockPostEdges } from "../../src/lib/mock-blog-data";
 import { siteProfile } from "../../src/lib/site-profile";
 
 test.beforeEach(async ({ page }) => {
@@ -21,7 +21,9 @@ test("mock home page renders realistic content and paginates", async ({
     }),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: mockPublication.displayTitle }).first(),
+    page
+      .getByRole("link", { name: siteProfile.wordmark ?? siteProfile.name })
+      .first(),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: mockPostEdges[0].node.title }),
@@ -51,7 +53,7 @@ test("home footer renders multi-column layout with socials, RSS, and inline subs
   await expect(footer.getByText("Stay in touch")).toBeVisible();
   await expect(footer.getByText("Short list. Real essays. Never spam.")).toBeVisible();
   await expect(footer.getByPlaceholder("email@address.com")).toBeVisible();
-  await expect(footer.getByRole("link", { name: "Latest essays" })).toHaveAttribute(
+  await expect(footer.getByRole("link", { name: "Latest essay" })).toHaveAttribute(
     "href",
     "/#latest-writing",
   );
@@ -63,7 +65,7 @@ test("home footer renders multi-column layout with socials, RSS, and inline subs
     "href",
     "/archive",
   );
-  await expect(footer.getByRole("link", { name: "RSS" })).toHaveAttribute(
+  await expect(footer.getByRole("link", { name: "RSS feed" })).toHaveAttribute(
     "href",
     "/rss.xml",
   );

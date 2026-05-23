@@ -27,7 +27,7 @@ export default async function Navbar() {
               href="/"
               className={cn("brand-link", brandLinkVariantClassNames[siteProfile.brandLinkVariant])}
             >
-              {title.displayTitle || title.title}
+              {siteProfile.wordmark || title.displayTitle || title.title}
             </Link>
           </div>
           <NavPrimaryLinks />

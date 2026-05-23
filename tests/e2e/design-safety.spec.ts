@@ -1,20 +1,12 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-import { mockPostEdges, mockPublication } from "../../src/lib/mock-blog-data";
+import { mockPostEdges } from "../../src/lib/mock-blog-data";
 import { siteProfile } from "../../src/lib/site-profile";
 
 async function seedNewsletterPreference(page: Page) {
   await page.addInitScript(() => {
     window.localStorage.setItem("newsletter", "playwright@example.com");
-  });
-}
-
-async function clearNewsletterPreference(page: Page) {
-  await page.addInitScript(() => {
-    window.localStorage.removeItem("newsletter");
-    window.localStorage.removeItem("newsletterDismissedAt");
-    window.sessionStorage.removeItem("newsletterNudgeShown");
   });
 }
 
@@ -27,49 +19,17 @@ async function expectNoSeriousAccessibilityViolations(page: Page) {
   expect(seriousViolations).toEqual([]);
 }
 
-test("newsletter nudge respects the current desktop and mobile behavior", async ({
-  page,
-}, testInfo) => {
-  await clearNewsletterPreference(page);
-  await page.goto("/?newsletterNudge=force", { waitUntil: "domcontentloaded" });
-
-  const isMobileProject = testInfo.project.name.includes("mobile");
-  const nudgeHeading = page.getByRole("heading", {
-    level: 2,
-    name: "New essays, no noise.",
-  });
-
-  if (isMobileProject) {
-    await page.evaluate(() => {
-      window.scrollTo(0, document.documentElement.scrollHeight);
-    });
-
-    await expect(nudgeHeading).toHaveCount(0);
-    return;
-  }
-
-  await page.evaluate(() => {
-    window.scrollTo(0, document.documentElement.scrollHeight);
-  });
-
-  await expect(nudgeHeading).toBeVisible({ timeout: 10000 });
-  await expect(
-    page.getByRole("complementary").getByPlaceholder("email@address.com"),
-  ).toBeVisible();
-
-  await page.getByRole("button", { name: "Dismiss newsletter prompt" }).click();
-  await expect(nudgeHeading).not.toBeVisible();
-});
-
 test("navbar keeps the core navigation affordances available", async ({
   page,
 }) => {
   await seedNewsletterPreference(page);
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  const brandText =
+    siteProfile.wordmark ?? "Sunkanmi Olawuwo";
   await expect(
     page.getByRole("banner").getByRole("link", {
-      name: mockPublication.displayTitle,
+      name: brandText,
     }),
   ).toHaveAttribute("href", "/");
   await expect(

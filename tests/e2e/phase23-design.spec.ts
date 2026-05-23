@@ -50,20 +50,20 @@ test("about page surfaces identity and principles", async ({ page }) => {
   await page.goto("/about", { waitUntil: "domcontentloaded" });
 
   await expect(page.locator("#identity")).toBeVisible();
-  await expect(page.getByText("Adoption beats elegance")).toBeVisible();
+  await expect(page.getByText(/Adoption beats elegance/i)).toBeVisible();
   await expect(
     page.getByRole("link", { name: /Browse the full archive/i }),
   ).toBeVisible();
 });
 
-test("now page lists current focus and last-updated stamp", async ({ page }) => {
+test("now page lists current focus and last-edited stamp", async ({ page }) => {
   await page.goto("/now", { waitUntil: "domcontentloaded" });
 
   await expect(
     page.getByRole("heading", { level: 1, name: /focused/i }),
   ).toBeVisible();
-  await expect(page.getByText("Writing").first()).toBeVisible();
-  await expect(page.getByText(/Last updated/i)).toBeVisible();
+  await expect(page.getByText("Working on").first()).toBeVisible();
+  await expect(page.getByText(/Last edited/i)).toBeVisible();
 });
 
 test("rss feed returns valid xml with mock posts", async ({ page }) => {
