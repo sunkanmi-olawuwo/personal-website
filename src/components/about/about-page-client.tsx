@@ -111,7 +111,7 @@ export default function AboutPageClient() {
             <div className="relative h-32 w-32 flex-none overflow-hidden rounded-[1.75rem] border border-[hsl(var(--hero-ring))] shadow-[var(--shadow-strong)] ring-4 ring-[hsl(var(--primary)/0.12)] sm:h-40 sm:w-40">
               <Image
                 fill
-                src={siteProfile.portraitSrc}
+                src={siteProfile.aboutPortraitSrc ?? siteProfile.portraitSrc}
                 alt={`Portrait of ${siteProfile.name}`}
                 className="object-cover"
                 sizes="(min-width: 640px) 160px, 128px"

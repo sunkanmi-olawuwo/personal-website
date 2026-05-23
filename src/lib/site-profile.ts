@@ -29,6 +29,7 @@ export type SiteProfile = {
   newsletterEyebrow?: string;
   newsletterSummary?: string;
   portraitSrc: string;
+  aboutPortraitSrc?: string;
   primaryCta: ProfileCta;
   secondaryCta: ProfileCta;
   socialLinks?: ProfileLink[];
@@ -47,7 +48,8 @@ export const siteProfile = {
   newsletterEyebrow: "The weekly digest",
   newsletterSummary:
     "Practical essays on backend engineering, AI application development, cloud architecture, testing, and the tradeoffs behind software that has to scale.",
-  portraitSrc: "/sunkanmi-olawuwo-headshot-cropped.png",
+  portraitSrc: "/sunkanmi-olawuwo-headshot-cropped.jpeg",
+  aboutPortraitSrc: "/about-pagprofile-photo.jpeg",
   primaryCta: {
     label: "Read the journal",
     href: "#latest-writing",
